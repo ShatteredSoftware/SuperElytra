@@ -5,12 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eisenwave.elytra</groupId>
-    <artifactId>superelytra</artifactId>
+    <artifactId>SuperElytra</artifactId>
     <version>2.4.0</version>
 
     <developers>
         <developer>
             <name>Jan "Eisenwave" Schultke</name>
+        </developer>
+        <developer>
+            <name>UberPilot</name>
         </developer>
     </developers>
 
