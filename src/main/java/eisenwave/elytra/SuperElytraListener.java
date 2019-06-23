@@ -84,7 +84,7 @@ public class SuperElytraListener implements Listener {
             world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
             if (time % 3 == 0) {
                 player.playSound(player.getLocation(), Sound.ENTITY_TNT_PRIMED, 0.1F, 0.1F);
-                if (time >= 60) {
+                if (time >= chargeUpTime) {
                     world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
                     player.playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 0.1F, 0.1F);
                 }
