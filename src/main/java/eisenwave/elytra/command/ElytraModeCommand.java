@@ -27,7 +27,10 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
     
     private final SuperElytraPlugin plugin;
     
-    public ElytraModeCommand(@NotNull SuperElytraPlugin plugin) {
+    public ElytraModeCommand(SuperElytraPlugin plugin) {
+        if(plugin == null) {
+            throw new IllegalArgumentException("Plugin cannot be null.");
+        }
         this.plugin = plugin;
     }
     

@@ -55,9 +55,11 @@ public class SuperElytraListener implements Listener {
             parts[i] = str.substring(i * partLength, Math.min(strLength, (i + 1) * partLength));
         return parts;
     }*/
-    
-    @NotNull
-    public SuperElytraPlayer getPlayer(@NotNull Player player) {
+
+    public SuperElytraPlayer getPlayer(Player player) {
+        if(player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
         if (playerMap.containsKey(player)) {
             return playerMap.get(player);
         }
