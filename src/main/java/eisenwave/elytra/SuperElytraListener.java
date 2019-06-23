@@ -1,7 +1,9 @@
 package eisenwave.elytra;
 
-import com.sun.istack.internal.NotNull;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -85,10 +87,10 @@ public class SuperElytraListener implements Listener {
     
             world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
             if (time % 3 == 0) {
-                player.playSound(player.getLocation(), Sound.ENTITY_TNT_PRIMED, 0.1F, 0.1F);
+                player.playSound(player.getLocation(), Sound.FUSE.bukkitSound(), 0.1F, 0.1F);
                 if (time >= chargeUpTime) {
                     world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
-                    player.playSound(player.getLocation(), Sound.ENTITY_BAT_TAKEOFF, 0.1F, 0.1F);
+                    player.playSound(player.getLocation(), Sound.BAT_TAKEOFF.bukkitSound(), 0.1F, 0.1F);
                 }
             }
         }
@@ -128,7 +130,7 @@ public class SuperElytraListener implements Listener {
                 
                 player.setVelocity(player.getVelocity().add(dir));
                 loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
-                player.playSound(loc, Sound.ENTITY_ENDER_DRAGON_FLAP, 0.1F, 2.0F);
+                player.playSound(loc, Sound.ENDERDRAGON_WINGS.bukkitSound(), 0.1F, 2.0F);
             }
             getPlayer(player).setChargeUpTicks(-1);
         }

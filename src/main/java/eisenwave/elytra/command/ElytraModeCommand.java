@@ -1,6 +1,5 @@
 package eisenwave.elytra.command;
 
-import com.sun.istack.internal.NotNull;
 import eisenwave.elytra.SuperElytraPlayer;
 import eisenwave.elytra.SuperElytraPlugin;
 import org.bukkit.ChatColor;
