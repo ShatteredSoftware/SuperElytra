@@ -14,3 +14,9 @@ launch_multiplier: 1.0
 # True if enhanced flight is to be enabled by default, else false
 # default = true
 default: true
+
+charge-sound: FUSE
+
+ready-sound: BAT_TAKEOFF
+
+launch-sound: ENDERDRAGON_WINGS

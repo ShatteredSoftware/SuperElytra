@@ -24,7 +24,10 @@ public class SuperElytraListener implements Listener {
         CONFIG_SPEED_MULTIPLIER = "speed_multiplier",
         CONFIG_LAUNCH_MULTIPLIER = "launch_multiplier",
         CONFIG_CHARGE_UP_TIME = "chargeup_time",
-        CONFIG_DEFAULT = "default";
+        CONFIG_DEFAULT = "default",
+        CONFIG_CHARGE_SOUND = "charge-sound",
+        CONFIG_READY_SOUND = "ready-sound",
+        CONFIG_LAUNCH_SOUND = "launch-sound";
     
     private final static int DEFAULT_CHARGE_UP_TIME = 60;
     private final static double
@@ -33,7 +36,10 @@ public class SuperElytraListener implements Listener {
         BASE_SPEED = 0.05,
         BASE_LAUNCH = 3;
     private final static boolean DEFAULT_DEFAULT = true;
-    
+    private final static Sound DEFAULT_CHARGE_SOUND = Sound.FUSE;
+    private final static Sound DEFAULT_READY_SOUND = Sound.BAT_TAKEOFF;
+    private final static Sound DEFAULT_LAUNCH_SOUND = Sound.ENDERDRAGON_WINGS;
+
     // INSTANCE
     
     private Map<Player, SuperElytraPlayer> playerMap = new WeakHashMap<>();
@@ -41,6 +47,7 @@ public class SuperElytraListener implements Listener {
     private final double speed, launchStrength;
     private final int chargeUpTime;
     private final boolean _default;
+    private Sound chargeSound, readySound, launchSound;
     
     public SuperElytraListener(SuperElytraPlugin plugin) {
         FileConfiguration config = plugin.getConfig();
@@ -48,6 +55,54 @@ public class SuperElytraListener implements Listener {
         this.launchStrength = config.getDouble(CONFIG_LAUNCH_MULTIPLIER, DEFAULT_LAUNCH_MULTIPLIER) * BASE_LAUNCH;
         this.chargeUpTime = config.getInt(CONFIG_CHARGE_UP_TIME, DEFAULT_CHARGE_UP_TIME);
         this._default = config.getBoolean(CONFIG_DEFAULT, DEFAULT_DEFAULT);
+        try
+        {
+            String sound = config.getString(CONFIG_CHARGE_SOUND, "FUSE").toUpperCase();
+            if(sound.equalsIgnoreCase("NONE"))
+            {
+                chargeSound = null;
+            }
+            else
+            {
+                this.chargeSound = Sound.valueOf(sound);
+            }
+        }
+        catch (IllegalArgumentException ex)
+        {
+            this.chargeSound = DEFAULT_CHARGE_SOUND;
+        }
+        try
+        {
+            String sound = config.getString(CONFIG_READY_SOUND, "BAT_TAKEOFF").toUpperCase();
+            if(sound.equalsIgnoreCase("NONE"))
+            {
+                readySound = null;
+            }
+            else
+            {
+                this.readySound = Sound.valueOf(sound);
+            }
+        }
+        catch (IllegalArgumentException ex)
+        {
+            this.readySound = DEFAULT_READY_SOUND;
+        }
+        try
+        {
+            String sound = config.getString(CONFIG_LAUNCH_SOUND, "BAT_TAKEOFF").toUpperCase();
+            if(sound.equalsIgnoreCase("NONE"))
+            {
+                launchSound = null;
+            }
+            else
+            {
+                this.launchSound = Sound.valueOf(sound);
+            }
+        }
+        catch (IllegalArgumentException ex)
+        {
+            this.launchSound = DEFAULT_LAUNCH_SOUND;
+        }
     }
     
     /*public static String[] splitIntoParts(String str, int partLength) {
@@ -71,7 +126,7 @@ public class SuperElytraListener implements Listener {
             return sePlayer;
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     public void onTick() {
         for (Map.Entry<Player, SuperElytraPlayer> entry : playerMap.entrySet()) {
@@ -87,10 +142,12 @@ public class SuperElytraListener implements Listener {
     
             world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
             if (time % 3 == 0) {
-                player.playSound(player.getLocation(), Sound.FUSE.bukkitSound(), 0.1F, 0.1F);
+                if(chargeSound != null)
+                    player.playSound(player.getLocation(), chargeSound.bukkitSound(), 0.1F, 0.1F);
                 if (time >= chargeUpTime) {
                     world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
-                    player.playSound(player.getLocation(), Sound.BAT_TAKEOFF.bukkitSound(), 0.1F, 0.1F);
+                    if(readySound != null)
+                        player.playSound(player.getLocation(), readySound.bukkitSound(), 0.1F, 0.1F);
                 }
             }
         }
@@ -106,7 +163,7 @@ public class SuperElytraListener implements Listener {
             player.setVelocity(player.getVelocity().add(unitVector.multiply(speed)));
         }
     }
-    
+
     @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
     public void onToggleSneak(PlayerToggleSneakEvent event) {
@@ -130,7 +187,8 @@ public class SuperElytraListener implements Listener {
                 
                 player.setVelocity(player.getVelocity().add(dir));
                 loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
-                player.playSound(loc, Sound.ENDERDRAGON_WINGS.bukkitSound(), 0.1F, 2.0F);
+                if(launchSound != null)
+                    player.playSound(loc, launchSound.bukkitSound(), 0.1F, 2.0F);
             }
             getPlayer(player).setChargeUpTicks(-1);
         }
