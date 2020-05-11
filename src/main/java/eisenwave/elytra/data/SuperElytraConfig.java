@@ -12,8 +12,8 @@ import org.bukkit.configuration.serialization.SerializableAs;
 public class SuperElytraConfig implements ConfigurationSerializable {
 
     public final int chargupTicks;
-    private final double speedMultiplier;
-    private final double launchMultiplier;
+    public final double speedMultiplier;
+    public final double launchMultiplier;
     public transient final double speed;
     public transient final double launch;
     public final boolean enabledDefault;
