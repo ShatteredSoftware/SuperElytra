@@ -48,7 +48,7 @@ public class SuperElytraListener implements Listener {
             if (time % 3 == 0) {
                 if(plugin.config().chargeSound != null)
                     player.playSound(player.getLocation(), plugin.config().chargeSound.bukkitSound(), 0.1F, 0.1F);
-                if (time >= plugin.config().chargupTicks) {
+                if (time >= plugin.config().chargeupTicks) {
                     world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
                     if(plugin.config().readySound != null)
                         player.playSound(player.getLocation(), plugin.config().readySound.bukkitSound(), 0.1F, 0.1F);
@@ -97,7 +97,7 @@ public class SuperElytraListener implements Listener {
         
         // release charge
         else {
-            if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargupTicks) {
+            if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargeupTicks) {
                 Location loc = player.getLocation();
                 Vector dir = loc.getDirection().add(new Vector(0, plugin.config().launch, 0));
                 

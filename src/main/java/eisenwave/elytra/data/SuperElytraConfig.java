@@ -11,7 +11,7 @@ import org.bukkit.configuration.serialization.SerializableAs;
 @SerializableAs("SuperElytraConfig")
 public class SuperElytraConfig implements ConfigurationSerializable {
 
-    public final int chargupTicks;
+    public final int chargeupTicks;
     public final double speedMultiplier;
     public final double launchMultiplier;
     public transient final double speed;
@@ -25,10 +25,10 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     private static final double BASE_LAUNCH = 3f;
     private static final double BASE_SPEED = 0.05f;
 
-    public SuperElytraConfig(int chargupTicks, double speedMultiplier, double launchMultiplier,
+    public SuperElytraConfig(int chargeupTicks, double speedMultiplier, double launchMultiplier,
         boolean enabledDefault, Sound chargeSound, Sound readySound,
         Sound launchSound, int autosaveInterval) {
-        this.chargupTicks = chargupTicks;
+        this.chargeupTicks = chargeupTicks;
         this.speedMultiplier = speedMultiplier;
         this.speed = speedMultiplier * BASE_SPEED;
         this.launchMultiplier = launchMultiplier;
