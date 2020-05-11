@@ -55,6 +55,16 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 else if(parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
                     prefs.launch = false;
                 }
+                else if(parse.equalsIgnoreCase("toggle")) {
+                    prefs.launch = !prefs.launch;
+                }
+                else {
+                    HashMap<String, String> msgArgs = new HashMap<>();
+                    msgArgs.put("invalid", args[1]);
+                    msgArgs.put("expected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
+                    plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
+                    return true;
+                }
             }
             if(prefs.launch) {
                 plugin.getMessenger().sendMessage(commandSender, "launch-enabled");
@@ -77,6 +87,13 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 }
                 else if(parse.equalsIgnoreCase("toggle")) {
                     prefs.boost = !prefs.boost;
+                }
+                else {
+                    HashMap<String, String> msgArgs = new HashMap<>();
+                    msgArgs.put("invalid", args[1]);
+                    msgArgs.put("allowed", "'on', 'off', 'true', 'false', 'enable' 'disable', 'toggle'");
+                    plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
+                    return true;
                 }
             }
             if(prefs.boost) {
