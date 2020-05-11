@@ -33,6 +33,7 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
             vars.put("argc", String.valueOf(args.length));
             vars.put("argx", "1");
             plugin.getMessenger().sendMessage(sender, "not-enough-args", vars, true);
+            return true;
         }
         
         if (!(sender instanceof Player)) {
@@ -53,14 +54,14 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
             default: {
                 sePlayer.setEnabled(!sePlayer.isEnabled());
             }
-            if(sePlayer.isEnabled()) {
-                plugin.getMessenger().sendMessage(sender, "all-enabled", true);
-            }
-            else {
-                plugin.getMessenger().sendMessage(sender, "all-disabled", true);
-            }
-            return true;
         }
+        if(sePlayer.isEnabled()) {
+            plugin.getMessenger().sendMessage(sender, "all-enabled", true);
+        }
+        else {
+            plugin.getMessenger().sendMessage(sender, "all-disabled", true);
+        }
+        return true;
     }
     
     @Override
