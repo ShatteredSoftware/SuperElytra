@@ -53,6 +53,22 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     }
 
     @Override
+    public String toString() {
+        return "SuperElytraConfig{" +
+            "chargeupTicks=" + chargeupTicks +
+            ", speedMultiplier=" + speedMultiplier +
+            ", launchMultiplier=" + launchMultiplier +
+            ", speed=" + speed +
+            ", launch=" + launch +
+            ", enabledDefault=" + enabledDefault +
+            ", chargeSound=" + chargeSound +
+            ", readySound=" + readySound +
+            ", launchSound=" + launchSound +
+            ", autosaveInterval=" + autosaveInterval +
+            '}';
+    }
+
+    @Override
     public Map<String, Object> serialize() {
         return ConfigUtil.reflectiveSerialize(this, SuperElytraConfig.class);
     }
