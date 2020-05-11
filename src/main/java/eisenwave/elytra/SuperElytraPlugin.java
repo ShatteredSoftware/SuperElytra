@@ -29,24 +29,26 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         if(this.getConfig().contains("config")) {
             this.config = (SuperElytraConfig) this.getConfig().get("config");
         }
-        this.config = new SuperElytraConfig(
-            this.getConfig().getInt("chargeup_time", 60),
-            this.getConfig().getDouble("speed_multiplier", 1.0d),
-            this.getConfig().getDouble("launch_multiplier", 1.0d),
-            this.getConfig().getBoolean("default", true),
-            Sound.valueOf(this.getConfig().getString("charge-sound", "FUSE")),
-            Sound.valueOf(this.getConfig().getString("ready-sound", "BAT_TAKEOFF")),
-            Sound.valueOf(this.getConfig().getString("launch-sound", "ENDERDRAGON_WINGS")),
-            600
-        );
-        this.getConfig().set("chargeup_time", null);
-        this.getConfig().set("speed_multiplier", null);
-        this.getConfig().set("launch_multiplier", null);
-        this.getConfig().set("default", null);
-        this.getConfig().set("charge-sound", null);
-        this.getConfig().set("ready-sound", null);
-        this.getConfig().set("launch-sound", null);
-        this.getConfig().set("config", this.config);
+        else {
+            this.config = new SuperElytraConfig(
+                this.getConfig().getInt("chargeup_time", 60),
+                this.getConfig().getDouble("speed_multiplier", 1.0d),
+                this.getConfig().getDouble("launch_multiplier", 1.0d),
+                this.getConfig().getBoolean("default", true),
+                Sound.valueOf(this.getConfig().getString("charge-sound", "FUSE")),
+                Sound.valueOf(this.getConfig().getString("ready-sound", "BAT_TAKEOFF")),
+                Sound.valueOf(this.getConfig().getString("launch-sound", "ENDERDRAGON_WINGS")),
+                600
+            );
+            this.getConfig().set("chargeup_time", null);
+            this.getConfig().set("speed_multiplier", null);
+            this.getConfig().set("launch_multiplier", null);
+            this.getConfig().set("default", null);
+            this.getConfig().set("charge-sound", null);
+            this.getConfig().set("ready-sound", null);
+            this.getConfig().set("launch-sound", null);
+            this.getConfig().set("config", this.config);
+        }
         try{
             this.getConfig().save(this.getDataFolder() + File.separator + "config.yml");
         } catch (Exception ex) {
