@@ -26,7 +26,7 @@ commands:
     permission: superelytra.command.elytrareload
     description: "Reloads the SuperElytra plugin."
   elytraprefs:
-    aliases: [elprefs]
+    aliases: [elprefs, elytrapreferences]
     permission: superelytra.command.elytraprefs
     description: "Changes user preferences."
   elytramode:
