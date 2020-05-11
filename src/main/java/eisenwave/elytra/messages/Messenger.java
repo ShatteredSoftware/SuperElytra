@@ -161,7 +161,7 @@ public class Messenger {
      */
     public void sendErrorMessage(
         CommandSender sender, String id, Map<String, String> vars, boolean prefix) {
-        sendMessage(sender, id, vars);
+        sendMessage(sender, id, vars, prefix);
         if (sender instanceof Player) {
             Player player = (Player) sender;
             player.playSound(player.getLocation(), Sound.NOTE_BASS.bukkitSound(), 1, .8f);
