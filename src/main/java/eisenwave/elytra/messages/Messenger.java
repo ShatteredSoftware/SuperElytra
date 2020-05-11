@@ -111,8 +111,7 @@ public class Messenger {
 
         if (vars != null) {
             for (Map.Entry<String, String> entry : vars.entrySet()) {
-                message = message.replaceAll('%' +
-                    entry.getKey() + '%',
+                message = message.replaceAll('%' + entry.getKey() + '%',
                     entry.getValue());
             }
         }

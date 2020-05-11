@@ -61,7 +61,7 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 else {
                     HashMap<String, String> msgArgs = new HashMap<>();
                     msgArgs.put("invalid", args[1]);
-                    msgArgs.put("expected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
+                    msgArgs.put("exptected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
                     plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
                     return true;
                 }
@@ -91,16 +91,16 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 else {
                     HashMap<String, String> msgArgs = new HashMap<>();
                     msgArgs.put("invalid", args[1]);
-                    msgArgs.put("allowed", "'on', 'off', 'true', 'false', 'enable' 'disable', 'toggle'");
+                    msgArgs.put("exptected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
                     plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
                     return true;
                 }
             }
             if(prefs.boost) {
-                plugin.getMessenger().sendMessage(commandSender, "boost-enabled");
+                plugin.getMessenger().sendMessage(commandSender, "boost-enabled", true);
             }
             else {
-                plugin.getMessenger().sendMessage(commandSender, "boost-disabled");
+                plugin.getMessenger().sendMessage(commandSender, "boost-disabled", true);
             }
         }
         return true;

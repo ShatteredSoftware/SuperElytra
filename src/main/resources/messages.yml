@@ -22,4 +22,4 @@ all-enabled: >
 all-disabled: >
   Boosting and launching have been &cdisabled&f.
 invalid-argument: >
-  Got invalid argument '%invalid%.' Expected %expected%.
+  &cGot invalid argument '%invalid%.' Expected %expected%.
