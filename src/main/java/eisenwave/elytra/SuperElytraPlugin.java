@@ -83,6 +83,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
     @Override
     public void onEnable() {
+        MetricsLite metrics = new MetricsLite(this, 7488);
         saveDefaultConfig();
         reload();
 
