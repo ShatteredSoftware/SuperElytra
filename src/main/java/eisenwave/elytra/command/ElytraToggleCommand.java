@@ -63,29 +63,6 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 plugin.getMessenger().sendMessage(commandSender, "launch-disabled");
             }
         }
-        if(args[0].equalsIgnoreCase("launch")) {
-            if(args.length == 1) {
-                prefs.launch = !prefs.launch;
-            }
-            if(args.length == 2) {
-                String parse = args[1];
-                if(parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
-                    prefs.launch = true;
-                }
-                else if(parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
-                    prefs.launch = false;
-                }
-                else if(parse.equalsIgnoreCase("toggle")) {
-                    prefs.launch = !prefs.launch;
-                }
-            }
-            if(prefs.launch) {
-                plugin.getMessenger().sendMessage(commandSender, "launch-enabled");
-            }
-            else {
-                plugin.getMessenger().sendMessage(commandSender, "launch-disabled");
-            }
-        }
         if(args[0].equalsIgnoreCase("boost")) {
             if(args.length == 1) {
                 prefs.boost = !prefs.boost;
