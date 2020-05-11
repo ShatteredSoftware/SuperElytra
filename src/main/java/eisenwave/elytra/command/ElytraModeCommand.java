@@ -1,7 +1,9 @@
 package eisenwave.elytra.command;
 
+import eisenwave.elytra.PlayerManager;
 import eisenwave.elytra.SuperElytraPlayer;
 import eisenwave.elytra.SuperElytraPlugin;
+import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,16 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ElytraModeCommand implements CommandExecutor, TabCompleter {
-    
-    private static final String
-        PREFIX_ERR = ChatColor.RED + "[SuperElytra] " + ChatColor.RESET,
-        PREFIX_MSG = ChatColor.BLUE + "[SuperElytra] " + ChatColor.RESET,
-        PREFIX_USE = ChatColor.RED + "Usage: /",
-        USAGE = PREFIX_USE + "elytramode (normal|super)",
-        ERROR_BAD_PLAYER = PREFIX_ERR + "Only players can toggle their elytra mode",
-        MSG_ON = PREFIX_MSG + "You enabled enhanced flight",
-        MSG_OFF = PREFIX_MSG + "You disabled enhanced flight";
-    
+
     private final SuperElytraPlugin plugin;
     
     public ElytraModeCommand(SuperElytraPlugin plugin) {
@@ -35,29 +28,38 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        command.setUsage(USAGE);
-        if (args.length < 1) return false;
+        if (args.length < 1) {
+            HashMap<String, String> vars = new HashMap<>();
+            vars.put("argc", String.valueOf(args.length));
+            vars.put("argx", "1");
+            plugin.getMessenger().sendMessage(sender, "not-enough-args", vars, true);
+        }
         
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ERROR_BAD_PLAYER);
+            plugin.getMessenger().sendMessage(sender, "no-console");
             return true;
         }
         
         Player player = (Player) sender;
-        SuperElytraPlayer sePlayer = plugin.getEventHandler().getPlayer(player);
+        SuperElytraPlayer sePlayer = PlayerManager.getInstance().getPlayer(player);
         
-        switch (args[0]) {
+        switch (args[0].toLowerCase()) {
             case "normal": {
                 sePlayer.setEnabled(false);
-                player.sendMessage(MSG_OFF);
-                return true;
             }
             case "super": {
                 sePlayer.setEnabled(true);
-                player.sendMessage(MSG_ON);
-                return true;
             }
-            default: return false;
+            default: {
+                sePlayer.setEnabled(!sePlayer.isEnabled());
+            }
+            if(sePlayer.isEnabled()) {
+                plugin.getMessenger().sendMessage(sender, "all-enabled", true);
+            }
+            else {
+                plugin.getMessenger().sendMessage(sender, "all-disabled", true);
+            }
+            return true;
         }
     }
     

@@ -1,6 +1,8 @@
 package eisenwave.elytra;
 
+import eisenwave.elytra.data.PlayerPreferences;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * The SuperElytra wrapper for a player.
@@ -8,13 +10,21 @@ import org.bukkit.entity.Player;
 public class SuperElytraPlayer {
     
     private final Player player;
+    public final PlayerPreferences preferences;
     
     private int chargeUpTicks = -1;
     private boolean enabled;
-    
-    public SuperElytraPlayer(Player player, boolean enabled) {
+
+    public SuperElytraPlayer(Player player) {
+        this(player, null);
+    }
+
+    public SuperElytraPlayer(Player player, Boolean enabled) {
         this.player = player;
-        this.enabled = enabled;
+        if(enabled == null) {
+            this.enabled = JavaPlugin.getPlugin(SuperElytraPlugin.class).config().enabledDefault;
+        }
+        this.preferences = PlayerPreferences.loadPreferences(player);
     }
     
     // GETTERS

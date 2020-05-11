@@ -1,22 +1,10 @@
-# Time it takes to charge up a jump in ticks
-# 1 second = 20 ticks
-# default = 60 ticks = 3 seconds
-chargeup_time: 60
-
-# Elytra gliding speed multiplier
-# default = 1.0
-speed_multiplier: 1.0
-
-# Launch strength multiplier
-# default = 1.0
-launch_multiplier: 1.0
-
-# True if enhanced flight is to be enabled by default, else false
-# default = true
-default: true
-
-charge-sound: FUSE
-
-ready-sound: BAT_TAKEOFF
-
-launch-sound: ENDERDRAGON_WINGS
+config:
+  ==: SuperElytraConfig # If you change this line, the plugin may not load properly.
+  chargeup-ticks: 60 # How many ticks it takes to launch from the ground.
+  speed-multiplier: 1.0 # How much to increase the flying speed each tick.
+  launch-multiplier: 1.0 # How much to increase the boost amount.
+  default: true # If flight/boosting should be enabled by default.
+  charge-sound: FUSE
+  ready-sound: BAT_TAKEOFF
+  launch-sound: ENDERDRAGON_WINGS
+  autosave-interval: 600 # Saves player preferences in this second interval.

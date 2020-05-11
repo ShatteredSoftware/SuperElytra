@@ -13,8 +13,22 @@ permissions:
   superelytra.command.elytramode:
     description: "/elytramode"
     default: true
+  superelytra.command.elytrareload:
+    description: "/elytrareload"
+    default: op
+  superelytra.command.elytraprefs:
+    description: "/elytraprefs"
+    default: true
 
 commands:
+  elytrareload:
+    aliases: [elreload]
+    permission: superelytra.command.elytrareload
+    description: "Reloads the SuperElytra plugin."
+  elytraprefs:
+    aliases: [elprefs]
+    permission: superelytra.command.elytraprefs
+    description: "Changes user preferences."
   elytramode:
     aliases: [elmode]
     permission: superelytra.command.elytramode
