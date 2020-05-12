@@ -43,17 +43,23 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
         
         Player player = (Player) sender;
         SuperElytraPlayer sePlayer = PlayerManager.getInstance().getPlayer(player);
-        
-        switch (args[0].toLowerCase()) {
-            case "normal": {
-                sePlayer.setEnabled(false);
-            }
-            case "super": {
-                sePlayer.setEnabled(true);
-            }
-            default: {
-                sePlayer.setEnabled(!sePlayer.isEnabled());
-            }
+
+        String parse = args[0];
+        if(parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
+            sePlayer.setEnabled(true);
+        }
+        else if(parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
+            sePlayer.setEnabled(false);
+        }
+        else if(parse.equalsIgnoreCase("toggle")) {
+            sePlayer.setEnabled(!sePlayer.isEnabled());
+        }
+        else {
+            HashMap<String, String> msgArgs = new HashMap<>();
+            msgArgs.put("invalid", args[0]);
+            msgArgs.put("exptected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
+            plugin.getMessenger().sendErrorMessage(sender, "invalid-argument", msgArgs, true);
+            return true;
         }
         if(sePlayer.isEnabled()) {
             plugin.getMessenger().sendMessage(sender, "all-enabled", true);
@@ -70,13 +76,29 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
         
         String arg = args[0].toLowerCase();
         if (arg.isEmpty())
-            return Arrays.asList("normal", "super");
-        else if ("normal".startsWith(arg))
-            return Collections.singletonList("normal");
-        else if ("super".startsWith(arg))
-            return Collections.singletonList("super");
-        else
-            return Collections.emptyList();
+            return Arrays.asList("enable", "disable", "toggle");
+        else if("enable".startsWith(arg)) {
+            return Collections.singletonList("enable");
+        }
+        else if("true".startsWith(arg)) {
+            return Collections.singletonList("true");
+        }
+        else if("on".startsWith(arg)) {
+            return Collections.singletonList("on");
+        }
+        else if("disable".startsWith(arg)) {
+            return Collections.singletonList("disable");
+        }
+        else if("false".startsWith(arg)) {
+            return Collections.singletonList("false");
+        }
+        else if("off".startsWith(arg)) {
+            return Collections.singletonList("off");
+        }
+        else if("toggle".startsWith(arg)) {
+            return Collections.singletonList("toggle");
+        }
+        return Collections.emptyList();
     }
-    
+
 }
