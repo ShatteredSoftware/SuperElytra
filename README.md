@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/UberPilot/SuperElytra/master/image/SuperElytraBanner.png"></p>
+<p align="center"><img src="https://i.imgur.com/kO6XgiS.png"></p>
 <p align="center">
 <a href="https://github.com/UberPilot/SuperElytra/releases"><img alt="GitHub Version" src="https://img.shields.io/github/release/UberPilot/SuperElytra?label=Github%20Version&logo=github&style=for-the-badge"></a>
 <a href="https://discord.gg/zUbNX9t"><img alt="Discord" src="https://img.shields.io/badge/Get%20Help-On%20Discord-%237289DA?style=for-the-badge&logo=discord" /></a>
@@ -6,7 +6,7 @@
 </p>
 
 ----
-This is my fork of SuperElytra. Check out the original by Eisenwave  [here]('https://www.spigotmc.org/resources/superelytra-improved-elytra-flight.19382/').
+This is my fork of SuperElytra. Check out the original by Eisenwave [here](https://www.spigotmc.org/resources/superelytra-improved-elytra-flight.19382/).
 
 ![https://i.imgur.com/R56HpBH.png](https://i.imgur.com/R56HpBH.png)   
 SuperElytra makes elytra flight more exciting by allowing players to launch flight from the ground, and fly infinitely in the air by increasing your flying speed when flying downwards. 
