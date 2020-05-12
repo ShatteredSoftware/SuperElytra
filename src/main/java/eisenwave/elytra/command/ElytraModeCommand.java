@@ -57,7 +57,7 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
         else {
             HashMap<String, String> msgArgs = new HashMap<>();
             msgArgs.put("invalid", args[0]);
-            msgArgs.put("exptected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
+            msgArgs.put("expected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
             plugin.getMessenger().sendErrorMessage(sender, "invalid-argument", msgArgs, true);
             return true;
         }
