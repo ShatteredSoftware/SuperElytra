@@ -1,6 +1,7 @@
 package eisenwave.elytra;
 
 import eisenwave.elytra.data.PlayerPreferences;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -35,7 +36,7 @@ public class SuperElytraPlayer {
      * @return the wrapped player
      */
     public Player getPlayer() {
-        return player;
+        return Bukkit.getPlayer(player.getUniqueId());
     }
     
     /**
