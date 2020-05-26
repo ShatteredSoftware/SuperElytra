@@ -32,6 +32,7 @@ public class SuperElytraListener implements Listener {
         return parts;
     }*/
 
+    @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         PlayerManager.getInstance().removePlayer(event.getPlayer());
     }
