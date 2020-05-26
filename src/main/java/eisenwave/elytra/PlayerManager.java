@@ -26,6 +26,12 @@ public class PlayerManager implements Iterable<SuperElytraPlayer> {
         players.put(player.getUniqueId(), new SuperElytraPlayer(player));
     }
 
+    public void removePlayer(Player player) {
+        SuperElytraPlayer sePlayer = players.get(player.getUniqueId());
+        players.remove(player.getUniqueId());
+        sePlayer.preferences.save(player);
+    }
+
     public SuperElytraPlayer getPlayer(Player player) {
         if(player == null) {
             throw new IllegalArgumentException("Player cannot be null.");

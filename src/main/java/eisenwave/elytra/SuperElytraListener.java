@@ -32,6 +32,10 @@ public class SuperElytraListener implements Listener {
         return parts;
     }*/
 
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        PlayerManager.getInstance().removePlayer(event.getPlayer());
+    }
+
     @SuppressWarnings("deprecation")
     public void onTick() {
         for (SuperElytraPlayer sePlayer : PlayerManager.getInstance()) {
