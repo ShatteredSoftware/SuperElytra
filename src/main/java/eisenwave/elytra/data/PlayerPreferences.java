@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -49,10 +50,10 @@ public class PlayerPreferences implements ConfigurationSerializable {
         return new PlayerPreferences(launch, boost);
     }
 
-    public void save(Player player) {
+    public void save(UUID uuid) {
         try {
             File f = new File(JavaPlugin.getPlugin(SuperElytraPlugin.class).getDataFolder(), "data" +
-                File.separator + player.getUniqueId().toString() + ".yml");
+                File.separator + uuid.toString() + ".yml");
             if(!f.exists()) {
                 f.getParentFile().mkdirs();
                 f.createNewFile();

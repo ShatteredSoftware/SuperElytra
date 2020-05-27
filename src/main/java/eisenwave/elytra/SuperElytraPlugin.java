@@ -71,7 +71,10 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
     public void autosave() {
         for(SuperElytraPlayer player : PlayerManager.getInstance()) {
-            player.preferences.save(player.getPlayer());
+            if(player == null || player.getPlayer() == null) {
+                continue;
+            }
+            player.preferences.save(player.getPlayer().getUniqueId());
         }
     }
 
