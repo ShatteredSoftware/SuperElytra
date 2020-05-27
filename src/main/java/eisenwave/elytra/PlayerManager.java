@@ -28,6 +28,9 @@ public class PlayerManager implements Iterable<SuperElytraPlayer> {
 
     public void removePlayer(Player player) {
         SuperElytraPlayer sePlayer = players.get(player.getUniqueId());
+        if(sePlayer == null) {
+            return;
+        }
         players.remove(player.getUniqueId());
         sePlayer.preferences.save(player.getUniqueId());
     }
