@@ -48,7 +48,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                     Sound.valueOf(this.getConfig().getString("ready-sound", "BAT_TAKEOFF")),
                     Sound.valueOf(this.getConfig().getString("launch-sound", "ENDERDRAGON_WINGS")),
                     600,
-                    5000
+                    50
                 );
                 this.getConfig().set("chargeup_time", null);
                 this.getConfig().set("speed_multiplier", null);
