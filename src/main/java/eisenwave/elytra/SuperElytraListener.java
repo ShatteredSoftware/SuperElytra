@@ -94,6 +94,9 @@ public class SuperElytraListener implements Listener {
         if(!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
             return;
         }
+        if(!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+            return;
+        }
 
         // start charging up
         if (event.isSneaking()) {
@@ -110,6 +113,7 @@ public class SuperElytraListener implements Listener {
                 loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
                 if(plugin.config().launchSound != null)
                     player.playSound(loc, plugin.config().launchSound.bukkitSound(), 0.1F, 2.0F);
+                plugin.getLaunchCooldownManager().use(player.getUniqueId());
             }
             PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
         }

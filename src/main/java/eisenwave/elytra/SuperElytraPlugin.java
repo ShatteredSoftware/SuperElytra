@@ -23,6 +23,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     private SuperElytraConfig config;
     private Messenger messenger;
     private Messages messages;
+    private CooldownManager launchCooldownManager;
 
     public SuperElytraConfig config() {
         return config;
@@ -46,7 +47,8 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                     Sound.valueOf(this.getConfig().getString("charge-sound", "FUSE")),
                     Sound.valueOf(this.getConfig().getString("ready-sound", "BAT_TAKEOFF")),
                     Sound.valueOf(this.getConfig().getString("launch-sound", "ENDERDRAGON_WINGS")),
-                    600
+                    600,
+                    5000
                 );
                 this.getConfig().set("chargeup_time", null);
                 this.getConfig().set("speed_multiplier", null);
@@ -61,6 +63,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                 ex.printStackTrace();
             }
         }
+        this.launchCooldownManager = new CooldownManager(this.config.cooldown);
         loadMessages();
     }
 
@@ -131,5 +134,9 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     @Override
     public Messenger getMessenger() {
         return messenger;
+    }
+
+    public CooldownManager getLaunchCooldownManager() {
+        return this.launchCooldownManager;
     }
 }

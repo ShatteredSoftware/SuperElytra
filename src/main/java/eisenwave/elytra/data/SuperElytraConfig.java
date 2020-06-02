@@ -21,13 +21,14 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     public final Sound readySound;
     public final Sound launchSound;
     public final int autosaveInterval;
+    public final int cooldown;
 
     private static final double BASE_LAUNCH = 3f;
     private static final double BASE_SPEED = 0.05f;
 
     public SuperElytraConfig(int chargeupTicks, double speedMultiplier, double launchMultiplier,
         boolean enabledDefault, Sound chargeSound, Sound readySound,
-        Sound launchSound, int autosaveInterval) {
+        Sound launchSound, int autosaveInterval, int cooldown) {
         this.chargeupTicks = chargeupTicks;
         this.speedMultiplier = speedMultiplier;
         this.speed = speedMultiplier * BASE_SPEED;
@@ -38,6 +39,7 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         this.readySound = readySound;
         this.launchSound = launchSound;
         this.autosaveInterval = autosaveInterval;
+        this.cooldown = cooldown;
     }
 
     public static SuperElytraConfig deserialize(Map<String, Object> map) {
@@ -49,7 +51,8 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         Sound readySound = getInEnum(map, "ready-sound", Sound.class, Sound.BAT_TAKEOFF);
         Sound launchSound = getInEnum(map, "launch-sound", Sound.class, Sound.ENDERDRAGON_WINGS);
         int autosaveInterval = getIfValid(map, "autosave-interval", Integer.class, 600);
-        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval);
+        int cooldown = getIfValid(map, "cooldown", Integer.class, 5000);
+        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown);
     }
 
     @Override
