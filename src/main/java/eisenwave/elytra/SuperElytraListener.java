@@ -1,5 +1,6 @@
 package eisenwave.elytra;
 
+import java.util.HashMap;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -94,9 +95,6 @@ public class SuperElytraListener implements Listener {
         if(!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
             return;
         }
-        if(!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
-            return;
-        }
 
         // start charging up
         if (event.isSneaking()) {
@@ -105,6 +103,20 @@ public class SuperElytraListener implements Listener {
         
         // release charge
         else {
+            if(!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+                HashMap<String, String> vars = new HashMap<>();
+                vars.put("seconds",
+                    plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId()) / 1000 == 1 ?
+                        plugin.getMessenger().getMessage("second", new HashMap<>()) :
+                        plugin.getMessenger().getMessage("seconds", new HashMap<>()
+                        ));
+                vars.put("number", String.valueOf(
+                    plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId()) / 1000));
+                vars.put("username", player.getName());
+                plugin.getMessenger().sendErrorMessage(player, "cooldown", vars, true);
+                PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
+                return;
+            }
             if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargeupTicks) {
                 Location loc = player.getLocation();
                 Vector dir = loc.getDirection().add(new Vector(0, plugin.config().launch, 0));

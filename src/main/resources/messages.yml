@@ -23,3 +23,7 @@ all-disabled: >
   Boosting and launching have been &cdisabled&f.
 invalid-argument: >
   &cGot invalid argument '%invalid%.' Expected %expected%.
+cooldown: >
+  &cYou cannot launch for another %number% %seconds%.
+second: second
+seconds: seconds

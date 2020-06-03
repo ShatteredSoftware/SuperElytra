@@ -56,7 +56,7 @@ public class CooldownManager {
     }
 
     /**
-     * Gets the amount of time left on a cooldown.
+     * Gets the amount of time left on a cooldown, in milliseconds.
      *
      * @param uuid The UUID of the player to check.
      * @return The amount of time left on this cooldown, or 0 if there is none.
