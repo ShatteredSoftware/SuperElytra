@@ -24,6 +24,10 @@ all-disabled: >
 invalid-argument: >
   &cGot invalid argument '%invalid%.' Expected %expected%.
 cooldown: >
-  &cYou cannot launch for another %number% %seconds%.
-second: second
-seconds: seconds
+  &cYou cannot launch for another %hours%%hours_plural%%minutes%%minutes_plural%%seconds%%seconds_plural%.
+second: " second"
+seconds: " seconds"
+minute: " minute "
+minutes: " minutes "
+hour: " hour "
+hours: " hours "

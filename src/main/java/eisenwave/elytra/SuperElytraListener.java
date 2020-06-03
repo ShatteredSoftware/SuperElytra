@@ -105,13 +105,38 @@ public class SuperElytraListener implements Listener {
         else {
             if(!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
                 HashMap<String, String> vars = new HashMap<>();
-                vars.put("seconds",
-                    plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId()) / 1000 == 1 ?
-                        plugin.getMessenger().getMessage("second", new HashMap<>()) :
-                        plugin.getMessenger().getMessage("seconds", new HashMap<>()
-                        ));
-                vars.put("number", String.valueOf(
-                    plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId()) / 1000));
+                long time = plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId());
+                long seconds = (time / 1000) % 60;
+                long minutes = (time / (1000 * 60)) % 60;
+                long hours = (time / (60 * 60 * 1000)) % 24;
+                vars.put("seconds", String.valueOf(seconds));
+                if (seconds == 1) {
+                    vars.put("seconds_plural", plugin.getMessenger().getMessage("second", new HashMap<>()));
+                } else {
+                    vars.put("seconds_plural", plugin.getMessenger().getMessage("seconds", new HashMap<>()));
+                }
+                if (minutes == 0) {
+                    vars.put("minutes_plural", "");
+                    vars.put("minutes", "");
+                }
+                else if (minutes == 1) {
+                    vars.put("minutes_plural", plugin.getMessenger().getMessage("minute", new HashMap<>()));
+                    vars.put("minutes", String.valueOf(minutes));
+                } else {
+                    vars.put("minutes_plural", plugin.getMessenger().getMessage("minutes", new HashMap<>()));
+                    vars.put("minutes", String.valueOf(minutes));
+                }
+                if (hours == 0) {
+                    vars.put("hours_plural", "");
+                    vars.put("hours", "");
+                }
+                else if (hours == 1) {
+                    vars.put("hours_plural", plugin.getMessenger().getMessage("hour", new HashMap<>()));
+                    vars.put("hours", String.valueOf(hours));
+                } else {
+                    vars.put("hours_plural", plugin.getMessenger().getMessage("hours", new HashMap<>()));
+                    vars.put("hours", String.valueOf(hours));
+                }
                 vars.put("username", player.getName());
                 plugin.getMessenger().sendErrorMessage(player, "cooldown", vars, true);
                 PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
