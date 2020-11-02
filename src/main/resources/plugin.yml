@@ -1,6 +1,6 @@
 name: SuperElytra
 main: eisenwave.elytra.SuperElytraPlugin
-version: ${project.version}-${git.commit.id.describe-short}
+version: @version@
 api-version: 1.13
 
 permissions:

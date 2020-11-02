@@ -26,6 +26,11 @@ repositories {
     }
 
     maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+    }
+
+    maven {
         url = 'https://maven.pkg.github.com/TheNewEconomy/packages'
     }
 
@@ -38,24 +43,24 @@ dependencies {
     compile 'org.spigotmc:spigot-api:1.13-R0.1-SNAPSHOT'
 }
 
+// Calculates the git hash and adds it to the version.
+task getHash {
+    def p1 = 'git rev-parse --short HEAD'.execute()
+    p1.waitFor()
+    getHash.ext.hash = p1.text
+}
 
-ext {
-    // Open the Git repository in the current directory.
-    git = org.ajoberstar.grgit.Grgit.open(file('.'))
-    // Get commit id of HEAD.
-    gitRevision = git.head().id
-    // Get abbreviated commit Id of HEAD
-    gitAbbRevision = git.head().abbreviatedId
-
-    dirty = !git.status().clean
-    dirtyStr = ""
-    if (dirty) {
-        dirtyStr = "-dirty"
+processResources {
+    dependsOn getHash
+    def hash = getHash.hash
+    with copySpec{
+        from 'src/main/resources'
+        filter(ReplaceTokens, tokens: [ version    : project.version + ' (' + hash.trim() + ')'])
     }
 }
 
 group = 'eisenwave.elytra'
-version = "${project.version}-${gitAbbRevision}${dirtyStr}"
+version = "${project.version}"
 sourceCompatibility = '1.8'
 
 publishing {
