@@ -22,23 +22,25 @@ dependencies {
 }
 
 // Calculates the git hash and adds it to the version.
-task getHash {
-    def p1 = 'git rev-parse --short HEAD'.execute()
-    p1.waitFor()
-    getHash.ext.hash = p1.text
+ext.getHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
 
 processResources {
-    dependsOn getHash
-    def hash = getHash.hash
+    def hash = "${getHash()}"
     with copySpec{
         from 'src/main/resources'
-        filter(ReplaceTokens, tokens: [ version    : project.version + ' (' + hash.trim() + ')'])
+        filter(ReplaceTokens, tokens: [ version: project.version ])
     }
 }
 
 group = 'eisenwave.elytra'
-version = "${project.version}"
+version = "${project.version}-${getHash()}"
 sourceCompatibility = '1.8'
 
 publishing {
