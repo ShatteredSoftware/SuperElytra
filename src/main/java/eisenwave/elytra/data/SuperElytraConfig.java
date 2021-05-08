@@ -62,7 +62,7 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         int autosaveInterval = getIfValid(map, "autosave-interval", Integer.class, 600);
         int cooldown = getIfValid(map, "cooldown", Integer.class, 5000);
         //noinspection unchecked
-        List<String> worlds = (List<String>) getIfValid(map, "worlds", List.class, new ArrayList<String>());
+        List<String> worlds = (ArrayList<String>) getIfValid(map, "worlds", ArrayList.class, new ArrayList<String>());
         worlds = worlds.stream().map(String::toLowerCase).collect(Collectors.toList());
         boolean worldBlacklist = getIfValid(map, "world-blacklist", Boolean.class, true);
         return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist);
