@@ -64,10 +64,14 @@ public class SuperElytraListener implements Listener {
     }
 
     private boolean shouldCancel(Player player) {
-        if (plugin.config().worlds.contains(player.getWorld().getName()) && plugin.config().worldBlacklist) {
+        // Worlds are in blacklist mode
+        if (plugin.config().worldBlacklist
+            && plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
             return true;
         }
-        if (!plugin.config().worlds.contains(player.getWorld().getName()) && !plugin.config().worldBlacklist) {
+        // Worlds are in whitelist mode
+        if (!plugin.config().worldBlacklist
+            && !plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
             return true;
         }
         return false;
