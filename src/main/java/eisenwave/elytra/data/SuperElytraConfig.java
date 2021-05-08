@@ -4,6 +4,8 @@ import static eisenwave.elytra.data.ConfigUtil.getIfValid;
 import static eisenwave.elytra.data.ConfigUtil.getInEnum;
 
 import eisenwave.elytra.Sound;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
@@ -22,13 +24,16 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     public final Sound launchSound;
     public final int autosaveInterval;
     public final int cooldown;
+    public final List<String> worlds;
+    public final boolean worldBlacklist;
 
     private static final double BASE_LAUNCH = 3f;
     private static final double BASE_SPEED = 0.05f;
 
     public SuperElytraConfig(int chargeupTicks, double speedMultiplier, double launchMultiplier,
         boolean enabledDefault, Sound chargeSound, Sound readySound,
-        Sound launchSound, int autosaveInterval, int cooldown) {
+        Sound launchSound, int autosaveInterval, int cooldown, List<String> worlds,
+        boolean worldBlacklist) {
         this.chargeupTicks = chargeupTicks;
         this.speedMultiplier = speedMultiplier;
         this.speed = speedMultiplier * BASE_SPEED;
@@ -40,6 +45,8 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         this.launchSound = launchSound;
         this.autosaveInterval = autosaveInterval;
         this.cooldown = cooldown;
+        this.worlds = worlds;
+        this.worldBlacklist = worldBlacklist;
     }
 
     public static SuperElytraConfig deserialize(Map<String, Object> map) {
@@ -52,7 +59,10 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         Sound launchSound = getInEnum(map, "launch-sound", Sound.class, Sound.ENDERDRAGON_WINGS);
         int autosaveInterval = getIfValid(map, "autosave-interval", Integer.class, 600);
         int cooldown = getIfValid(map, "cooldown", Integer.class, 5000);
-        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown);
+        //noinspection unchecked
+        List<String> worlds = (List<String>) getIfValid(map, "worlds", List.class, new ArrayList<String>());
+        boolean worldBlacklist = getIfValid(map, "world-blacklist", Boolean.class, true);
+        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist);
     }
 
     @Override

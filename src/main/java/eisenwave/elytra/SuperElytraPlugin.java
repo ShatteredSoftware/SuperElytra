@@ -11,6 +11,7 @@ import eisenwave.elytra.messages.Messenger;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
@@ -48,7 +49,9 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                     Sound.valueOf(this.getConfig().getString("ready-sound", "BAT_TAKEOFF")),
                     Sound.valueOf(this.getConfig().getString("launch-sound", "ENDERDRAGON_WINGS")),
                     600,
-                    50
+                    50,
+                    new ArrayList<>(),
+                    true
                 );
                 this.getConfig().set("chargeup_time", null);
                 this.getConfig().set("speed_multiplier", null);

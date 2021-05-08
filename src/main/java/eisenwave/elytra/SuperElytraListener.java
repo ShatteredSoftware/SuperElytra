@@ -20,7 +20,7 @@ public class SuperElytraListener implements Listener {
         PERMISSION_LAUNCH = "superelytra.launch",
         PERMISSION_GLIDE = "superelytra.glide";
 
-    private transient SuperElytraPlugin plugin;
+    private final transient SuperElytraPlugin plugin;
     public SuperElytraListener(SuperElytraPlugin plugin) {
         this.plugin = plugin;
     }
@@ -38,10 +38,10 @@ public class SuperElytraListener implements Listener {
         PlayerManager.getInstance().removePlayer(event.getPlayer());
     }
 
-    @SuppressWarnings("deprecation")
     public void onTick() {
         for (SuperElytraPlayer sePlayer : PlayerManager.getInstance()) {
             Player player = sePlayer.getPlayer();
+            if (shouldCancel(player)) continue;
             if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
             
             int time = sePlayer.getChargeUpTicks();
@@ -62,12 +62,23 @@ public class SuperElytraListener implements Listener {
             }
         }
     }
-    
+
+    private boolean shouldCancel(Player player) {
+        if (plugin.config().worlds.contains(player.getWorld().getName()) && plugin.config().worldBlacklist) {
+            return true;
+        }
+        if (!plugin.config().worlds.contains(player.getWorld().getName()) && !plugin.config().worldBlacklist) {
+            return true;
+        }
+        return false;
+    }
+
     // BUKKIT EVENT HANDLERS
     
     @EventHandler(ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+        if (shouldCancel(player)) return;
         if(!player.isGliding()) {
             return;
         }
@@ -82,12 +93,12 @@ public class SuperElytraListener implements Listener {
         player.setVelocity(player.getVelocity().add(unitVector.multiply(plugin.config().speed)));
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         Player player = event.getPlayer();
         if (!player.hasPermission(PERMISSION_LAUNCH)) return;
-        
+        if (shouldCancel(player)) return;
+
         ItemStack chestPlate = player.getEquipment().getChestplate();
         if (chestPlate == null || chestPlate.getType() != Material.ELYTRA)
             return;
