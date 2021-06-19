@@ -43,6 +43,11 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
         
         Player player = (Player) sender;
         SuperElytraPlayer sePlayer = PlayerManager.getInstance().getPlayer(player);
+        if (!player.hasPermission("superelytra.command.elytramode")) {
+            HashMap<String, String> vars = new HashMap<>();
+            plugin.getMessenger().sendErrorMessage(sender, "no-permission", vars, true);
+            return true;
+        }
 
         String parse = args[0];
         if(parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {

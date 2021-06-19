@@ -41,6 +41,9 @@ public class SuperElytraListener implements Listener {
     public void onTick() {
         for (SuperElytraPlayer sePlayer : PlayerManager.getInstance()) {
             Player player = sePlayer.getPlayer();
+            if (!player.hasPermission("superelytra.launch")) {
+                return;
+            }
             if (shouldCancel(player)) continue;
             if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
             
