@@ -4,11 +4,12 @@ import static eisenwave.elytra.data.ConfigUtil.getIfValid;
 import static eisenwave.elytra.data.ConfigUtil.getInEnum;
 
 import eisenwave.elytra.Sound;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 
@@ -28,14 +29,18 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     public final int cooldown;
     public final List<String> worlds;
     public final boolean worldBlacklist;
+    public final boolean allowBoosting;
+    public final int boostDuration;
+    public final double boostModifier;
+    public final double maxGlideAngle;
 
     private static final double BASE_LAUNCH = 3f;
     private static final double BASE_SPEED = 0.05f;
 
     public SuperElytraConfig(int chargeupTicks, double speedMultiplier, double launchMultiplier,
-        boolean enabledDefault, Sound chargeSound, Sound readySound,
-        Sound launchSound, int autosaveInterval, int cooldown, List<String> worlds,
-        boolean worldBlacklist) {
+                             boolean enabledDefault, Sound chargeSound, Sound readySound,
+                             Sound launchSound, int autosaveInterval, int cooldown, List<String> worlds,
+                             boolean worldBlacklist, boolean allowBoosting, int boostDuration, double boostModifier, double maxGlideAngle) {
         this.chargeupTicks = chargeupTicks;
         this.speedMultiplier = speedMultiplier;
         this.speed = speedMultiplier * BASE_SPEED;
@@ -49,6 +54,10 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         this.cooldown = cooldown;
         this.worlds = worlds;
         this.worldBlacklist = worldBlacklist;
+        this.allowBoosting = allowBoosting;
+        this.boostDuration = boostDuration;
+        this.boostModifier = boostModifier;
+        this.maxGlideAngle = maxGlideAngle;
     }
 
     public static SuperElytraConfig deserialize(Map<String, Object> map) {
@@ -65,23 +74,33 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         List<String> worlds = (ArrayList<String>) getIfValid(map, "worlds", ArrayList.class, new ArrayList<String>());
         worlds = worlds.stream().map(String::toLowerCase).collect(Collectors.toList());
         boolean worldBlacklist = getIfValid(map, "world-blacklist", Boolean.class, true);
-        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist);
+        boolean allowBoosting = getIfValid(map, "allow-boosting", Boolean.class, false);
+        int boostDuration = getIfValid(map, "boost-duration", Integer.class, 40);
+        double boostModifier = getIfValid(map, "boost-modifier", Double.class, 0.0);
+        double maxGlideAngle = getIfValid(map, "max-glide-angle", Double.class, -90.0);
+        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist, allowBoosting, boostDuration, boostModifier, maxGlideAngle);
     }
 
     @Override
     public String toString() {
         return "SuperElytraConfig{" +
-            "chargeupTicks=" + chargeupTicks +
-            ", speedMultiplier=" + speedMultiplier +
-            ", launchMultiplier=" + launchMultiplier +
-            ", speed=" + speed +
-            ", launch=" + launch +
-            ", enabledDefault=" + enabledDefault +
-            ", chargeSound=" + chargeSound +
-            ", readySound=" + readySound +
-            ", launchSound=" + launchSound +
-            ", autosaveInterval=" + autosaveInterval +
-            '}';
+                "chargeupTicks=" + chargeupTicks +
+                ", speedMultiplier=" + speedMultiplier +
+                ", launchMultiplier=" + launchMultiplier +
+                ", speed=" + speed +
+                ", launch=" + launch +
+                ", enabledDefault=" + enabledDefault +
+                ", chargeSound=" + chargeSound +
+                ", readySound=" + readySound +
+                ", launchSound=" + launchSound +
+                ", autosaveInterval=" + autosaveInterval +
+                ", cooldown=" + cooldown +
+                ", worlds=" + worlds +
+                ", worldBlacklist=" + worldBlacklist +
+                ", allowBoosting=" + allowBoosting +
+                ", boostDuration=" + boostDuration +
+                ", boostModifier=" + boostModifier +
+                '}';
     }
 
     @Override

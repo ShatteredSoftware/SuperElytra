@@ -9,6 +9,15 @@ config:
   launch-sound: ENDERDRAGON_WINGS
   autosave-interval: 600 # Saves player preferences in this second interval.
   cooldown: 50 # Cooldown on launching in miliseconds.
+  # Set the max angle that a player can boost at.
+  # Above horizontal is negative, below horizontal is positive
+  max-glide-angle: -90.0
+  # Apply additional boosting to fireworks
+  boost-enabled: true
+  # Additional boost per boost tick
+  boost-modifier: 1.0
+  # Ticks per firework duration level
+  boost-duration: 20
   worlds:
     - world
   world-blacklist: false

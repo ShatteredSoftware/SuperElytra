@@ -9,8 +9,6 @@ import eisenwave.elytra.messages.Messageable;
 import eisenwave.elytra.messages.Messages;
 import eisenwave.elytra.messages.Messenger;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -25,6 +23,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     private Messenger messenger;
     private Messages messages;
     private CooldownManager launchCooldownManager;
+    private CooldownManager boostCooldownManager;
 
     public SuperElytraConfig config() {
         return config;
@@ -51,8 +50,8 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                     600,
                     50,
                     new ArrayList<>(),
-                    true
-                );
+                    true,
+                        false, 40, 0.0, -90);
                 this.getConfig().set("chargeup_time", null);
                 this.getConfig().set("speed_multiplier", null);
                 this.getConfig().set("launch_multiplier", null);
@@ -67,6 +66,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
             }
         }
         this.launchCooldownManager = new CooldownManager(this.config.cooldown);
+        this.boostCooldownManager = new CooldownManager(50);
         loadMessages();
     }
 

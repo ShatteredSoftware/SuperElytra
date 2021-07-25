@@ -58,10 +58,9 @@ public final class ConfigUtil {
         if (obj == null) {
             return def;
         }
-        if(!obj.getClass().isAssignableFrom(clazz)) {
-            System.err.println("Found " + key +
-                " in config with wrong type " + obj.getClass().getName() + " (expected " +
-                clazz.getName() + "). Using default " + def + ".");
+        if(!clazz.isInstance(obj)) {
+            System.err.println("Found " + key + " (" + obj + ") in config with wrong type " + obj.getClass().getName()
+                + " (expected " + clazz.getName() + "). Using default " + def + ".");
             return def;
         }
         return clazz.cast(map.get(key));

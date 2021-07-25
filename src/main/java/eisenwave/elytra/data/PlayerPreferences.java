@@ -16,10 +16,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class PlayerPreferences implements ConfigurationSerializable {
     public boolean launch;
     public boolean boost;
+    public boolean firework;
 
-    public PlayerPreferences(boolean launch, boolean boost) {
+    public PlayerPreferences(boolean launch, boolean boost, boolean firework) {
         this.launch = launch;
         this.boost = boost;
+        this.firework = firework;
     }
 
     public static PlayerPreferences loadPreferences(Player player) {
@@ -34,20 +36,21 @@ public class PlayerPreferences implements ConfigurationSerializable {
             if(config.contains("settings")) {
                 return (PlayerPreferences) config.get("settings");
             }
-            PlayerPreferences prefs = new PlayerPreferences(true, true);
+            PlayerPreferences prefs = new PlayerPreferences(true, true, true);
             config.set("settings", prefs);
             config.save(f);
             return prefs;
         } catch (IOException e) {
             e.printStackTrace();
-            return new PlayerPreferences(true, true);
+            return new PlayerPreferences(true, true, true);
         }
     }
 
     public static PlayerPreferences deserialize(Map<String, Object> map) {
         boolean launch = ConfigUtil.getIfValid(map, "launch", Boolean.class, true);
         boolean boost = ConfigUtil.getIfValid(map, "boost", Boolean.class, true);
-        return new PlayerPreferences(launch, boost);
+        boolean firework = ConfigUtil.getIfValid(map, "firework", Boolean.class, true);
+        return new PlayerPreferences(launch, boost, firework);
     }
 
     public void save(UUID uuid) {
@@ -59,7 +62,7 @@ public class PlayerPreferences implements ConfigurationSerializable {
                 f.createNewFile();
             }
             YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
-            PlayerPreferences prefs = (PlayerPreferences) config.get("settings", new PlayerPreferences(true, true));
+            PlayerPreferences prefs = (PlayerPreferences) config.get("settings", new PlayerPreferences(true, true, true));
             config.set("settings", prefs);
             config.save(f);
         } catch (IOException e) {
@@ -72,6 +75,7 @@ public class PlayerPreferences implements ConfigurationSerializable {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("launch", launch);
         map.put("boost", boost);
+        map.put("firework", firework);
         return map;
     }
 }

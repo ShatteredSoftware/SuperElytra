@@ -15,6 +15,7 @@ public class SuperElytraPlayer {
     
     private int chargeUpTicks = -1;
     private boolean enabled;
+    private int boostTicks;
 
     public SuperElytraPlayer(Player player) {
         this(player, null);
@@ -67,7 +68,11 @@ public class SuperElytraPlayer {
     public boolean isChargingLaunch() {
         return chargeUpTicks >= 0;
     }
-    
+
+    public boolean isBoosting() {
+        return boostTicks > 0;
+    }
+
     // SETTERS
     
     /**
@@ -88,5 +93,20 @@ public class SuperElytraPlayer {
     public void setChargeUpTicks(int ticks) {
         this.chargeUpTicks = ticks;
     }
-    
+
+    public void setBoostTicks(int ticks) {
+        this.boostTicks = ticks;
+    }
+
+    public void addBoostTicks(int ticks) {
+        this.boostTicks += ticks;
+    }
+
+    public void decrementBoostTicks() {
+        this.boostTicks--;
+    }
+
+    public int getBoostTicks() {
+        return this.boostTicks;
+    }
 }

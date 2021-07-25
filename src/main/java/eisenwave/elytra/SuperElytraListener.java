@@ -1,37 +1,50 @@
 package eisenwave.elytra;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.util.Vector;
 
 public class SuperElytraListener implements Listener {
-    
-    // STATIC CONST
-    
+
     private final static String
-        PERMISSION_LAUNCH = "superelytra.launch",
-        PERMISSION_GLIDE = "superelytra.glide";
+            PERMISSION_LAUNCH = "superelytra.launch",
+            PERMISSION_GLIDE = "superelytra.glide",
+            PERMISSION_BOOST = "superelytra.boost";
 
     private final transient SuperElytraPlugin plugin;
+
     public SuperElytraListener(SuperElytraPlugin plugin) {
         this.plugin = plugin;
     }
-    
-    /*public static String[] splitIntoParts(String str, int partLength) {
-        int strLength = str.length();
-        String[] parts = new String[(int) Math.ceil(strLength / (float) partLength)];
-        for (int i = 0; i < parts.length; i++)
-            parts[i] = str.substring(i * partLength, Math.min(strLength, (i + 1) * partLength));
-        return parts;
-    }*/
+
+    private boolean shouldCancel(Player player) {
+        // Worlds are in blacklist mode
+        if (plugin.config().worldBlacklist
+                && plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
+            return true;
+        }
+        // Worlds are in whitelist mode
+        //noinspection RedundantIfStatement -- I like the parallel here.
+        if (!plugin.config().worldBlacklist
+                && !plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
+            return true;
+        }
+        return false;
+    }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
@@ -41,63 +54,79 @@ public class SuperElytraListener implements Listener {
     public void onTick() {
         for (SuperElytraPlayer sePlayer : PlayerManager.getInstance()) {
             Player player = sePlayer.getPlayer();
+            if (!player.isGliding()) {
+                sePlayer.setBoostTicks(0);
+            }
             if (!player.hasPermission("superelytra.launch")) {
                 return;
             }
             if (shouldCancel(player)) continue;
             if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
-            
+
             int time = sePlayer.getChargeUpTicks();
             sePlayer.setChargeUpTicks(++time);
-            
+
             Location loc = player.getLocation();
             World world = player.getWorld();
-    
+
             world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
             if (time % 3 == 0) {
-                if(plugin.config().chargeSound != null)
+                if (plugin.config().chargeSound != null)
                     player.playSound(player.getLocation(), plugin.config().chargeSound.bukkitSound(), 0.1F, 0.1F);
                 if (time >= plugin.config().chargeupTicks) {
                     world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
-                    if(plugin.config().readySound != null)
+                    if (plugin.config().readySound != null)
                         player.playSound(player.getLocation(), plugin.config().readySound.bukkitSound(), 0.1F, 0.1F);
                 }
             }
         }
     }
 
-    private boolean shouldCancel(Player player) {
-        // Worlds are in blacklist mode
-        if (plugin.config().worldBlacklist
-            && plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
-            return true;
-        }
-        // Worlds are in whitelist mode
-        if (!plugin.config().worldBlacklist
-            && !plugin.config().worlds.contains(player.getWorld().getName().toLowerCase())) {
-            return true;
-        }
-        return false;
-    }
-
-    // BUKKIT EVENT HANDLERS
-    
     @EventHandler(ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         if (shouldCancel(player)) return;
-        if(!player.isGliding()) {
+        if (!player.isGliding()) {
             return;
         }
-        if(!player.hasPermission(PERMISSION_GLIDE)) {
-            return;
-        }
+
         SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
-        if(!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.boost) {
+
+        if (player.hasPermission(PERMISSION_GLIDE)
+            && superElytraPlayer.isEnabled()
+            && superElytraPlayer.preferences.boost
+            && player.getLocation().getPitch() > plugin.config().maxGlideAngle
+        ) {
+            Vector unitVector = new Vector(0, player.getLocation().getDirection().getY(), 0);
+            player.setVelocity(player.getVelocity().add(unitVector.multiply(plugin.config().speed)));
+        }
+
+        if (player.hasPermission(PERMISSION_BOOST)
+            && superElytraPlayer.isBoosting()
+            && superElytraPlayer.preferences.firework) {
+            Vector boostMomentum = player.getVelocity().normalize().multiply(plugin.config().boostModifier);
+            player.setVelocity(player.getLocation().getDirection().add(boostMomentum));
+            superElytraPlayer.decrementBoostTicks();
+        }
+    }
+
+    @EventHandler()
+    public void onBoost(PlayerInteractEvent event) {
+        SuperElytraPlayer player = PlayerManager.getInstance().getPlayer(event.getPlayer());
+        ItemStack item = event.getItem();
+
+        if (!player.isEnabled()
+            || !player.preferences.firework
+            || event.getAction() != Action.RIGHT_CLICK_AIR
+            || item == null
+            || item.getType() != Material.FIREWORK_ROCKET
+        ) {
             return;
         }
-        Vector unitVector = new Vector(0, player.getLocation().getDirection().getY(), 0);
-        player.setVelocity(player.getVelocity().add(unitVector.multiply(plugin.config().speed)));
+
+        FireworkMeta meta = (FireworkMeta) item.getItemMeta();
+        player.setBoostTicks((meta.getPower() + 1) * plugin.config().boostDuration);
+
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -110,7 +139,7 @@ public class SuperElytraListener implements Listener {
         if (chestPlate == null || chestPlate.getType() != Material.ELYTRA)
             return;
         SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
-        if(!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
+        if (!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
             return;
         }
 
@@ -118,11 +147,11 @@ public class SuperElytraListener implements Listener {
         if (event.isSneaking()) {
             PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(0);
         }
-        
+
         // release charge
         else {
             if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargeupTicks) {
-                if(!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+                if (!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
                     HashMap<String, String> vars = new HashMap<>();
                     long time = plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId());
                     long seconds = (time / 1000) % 60;
@@ -137,8 +166,7 @@ public class SuperElytraListener implements Listener {
                     if (minutes == 0) {
                         vars.put("minutes_plural", "");
                         vars.put("minutes", "");
-                    }
-                    else if (minutes == 1) {
+                    } else if (minutes == 1) {
                         vars.put("minutes_plural", plugin.getMessenger().getMessage("minute", new HashMap<>()));
                         vars.put("minutes", String.valueOf(minutes));
                     } else {
@@ -148,8 +176,7 @@ public class SuperElytraListener implements Listener {
                     if (hours == 0) {
                         vars.put("hours_plural", "");
                         vars.put("hours", "");
-                    }
-                    else if (hours == 1) {
+                    } else if (hours == 1) {
                         vars.put("hours_plural", plugin.getMessenger().getMessage("hour", new HashMap<>()));
                         vars.put("hours", String.valueOf(hours));
                     } else {
@@ -163,15 +190,15 @@ public class SuperElytraListener implements Listener {
                 }
                 Location loc = player.getLocation();
                 Vector dir = loc.getDirection().add(new Vector(0, plugin.config().launch, 0));
-                
+
                 player.setVelocity(player.getVelocity().add(dir));
                 loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
-                if(plugin.config().launchSound != null)
+                if (plugin.config().launchSound != null)
                     player.playSound(loc, plugin.config().launchSound.bukkitSound(), 0.1F, 2.0F);
                 plugin.getLaunchCooldownManager().use(player.getUniqueId());
             }
             PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
         }
     }
-    
+
 }
