@@ -103,6 +103,36 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 plugin.getMessenger().sendMessage(commandSender, "boost-disabled", true);
             }
         }
+        if(args[0].equalsIgnoreCase("firework")) {
+            if(args.length == 1) {
+                prefs.firework = !prefs.firework;
+            }
+            if(args.length == 2) {
+                String parse = args[1];
+                if(parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
+                    prefs.firework = true;
+                }
+                else if(parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
+                    prefs.firework = false;
+                }
+                else if(parse.equalsIgnoreCase("toggle")) {
+                    prefs.firework = !prefs.firework;
+                }
+                else {
+                    HashMap<String, String> msgArgs = new HashMap<>();
+                    msgArgs.put("invalid", args[1]);
+                    msgArgs.put("exptected", "'on', 'off', 'true', 'false', 'enable' 'disable', or 'toggle'");
+                    plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
+                    return true;
+                }
+            }
+            if(prefs.firework) {
+                plugin.getMessenger().sendMessage(commandSender, "firework-enabled", true);
+            }
+            else {
+                plugin.getMessenger().sendMessage(commandSender, "firework-disabled", true);
+            }
+        }
         return true;
     }
 
@@ -114,43 +144,20 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
         if(args.length == 1) {
             String arg = args[0].toLowerCase();
             if (arg.isEmpty())
-                return Arrays.asList("launch", "boost");
+                return Arrays.asList("launch", "boost", "firework");
             else if ("launch".startsWith(arg))
                 return Collections.singletonList("launch");
             else if ("boost".startsWith(arg))
                 return Collections.singletonList("boost");
+            else if ("firework".startsWith(arg))
+                return Collections.singletonList("firework");
             else
                 return Collections.emptyList();
         }
         if(args.length == 2) {
             String parent = args[0].toLowerCase();
             String arg = args[1].toLowerCase();
-            if(parent.equalsIgnoreCase("launch")) {
-                if (arg.isEmpty())
-                    return Arrays.asList("enable", "disable", "toggle");
-                else if("enable".startsWith(arg)) {
-                    return Collections.singletonList("enable");
-                }
-                else if("true".startsWith(arg)) {
-                    return Collections.singletonList("true");
-                }
-                else if("on".startsWith(arg)) {
-                    return Collections.singletonList("on");
-                }
-                else if("disable".startsWith(arg)) {
-                    return Collections.singletonList("disable");
-                }
-                else if("false".startsWith(arg)) {
-                    return Collections.singletonList("false");
-                }
-                else if("off".startsWith(arg)) {
-                    return Collections.singletonList("off");
-                }
-                else if("toggle".startsWith(arg)) {
-                    return Collections.singletonList("toggle");
-                }
-            }
-            else if(parent.equalsIgnoreCase("boost")) {
+            if(parent.equalsIgnoreCase("launch") || parent.equalsIgnoreCase("boost") || parent.equalsIgnoreCase("firework")) {
                 if (arg.isEmpty())
                     return Arrays.asList("enable", "disable", "toggle");
                 else if("enable".startsWith(arg)) {
