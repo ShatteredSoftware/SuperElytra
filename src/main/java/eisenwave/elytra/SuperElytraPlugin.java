@@ -10,6 +10,11 @@ import eisenwave.elytra.messages.Messages;
 import eisenwave.elytra.messages.Messenger;
 import java.io.File;
 import java.util.ArrayList;
+
+import io.sentry.Sentry;
+import io.sentry.SentryEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
@@ -98,6 +103,14 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
         initListeners();
         initCommands();
+
+        Sentry.init(options -> {
+              options.setDsn("https://d48172d870b54d749614e2711d6f377d@o244958.ingest.sentry.io/6339955");
+              options.setTracesSampleRate(1.0);
+        });
+        Sentry.setExtra("plugin_version", getDescription().getVersion());
+        Sentry.setExtra("bukkit_version", getServer().getBukkitVersion());
+        Sentry.setExtra("server_version", getServer().getVersion());
     }
 
     private void loadMessages() {

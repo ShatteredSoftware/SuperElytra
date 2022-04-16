@@ -3,6 +3,7 @@ package eisenwave.elytra;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import io.sentry.Sentry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -53,151 +54,167 @@ public class SuperElytraListener implements Listener {
 
     public void onTick() {
         for (SuperElytraPlayer sePlayer : PlayerManager.getInstance()) {
-            Player player = sePlayer.getPlayer();
-            if (!player.isGliding()) {
-                sePlayer.setBoostTicks(0);
-            }
-            if (!player.hasPermission("superelytra.launch")) {
-                return;
-            }
-            if (shouldCancel(player)) continue;
-            if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
-
-            int time = sePlayer.getChargeUpTicks();
-            sePlayer.setChargeUpTicks(++time);
-
-            Location loc = player.getLocation();
-            World world = player.getWorld();
-
-            world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
-            if (time % 3 == 0) {
-                if (plugin.config().chargeSound != null)
-                    player.playSound(player.getLocation(), plugin.config().chargeSound.bukkitSound(), 0.1F, 0.1F);
-                if (time >= plugin.config().chargeupTicks) {
-                    world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
-                    if (plugin.config().readySound != null)
-                        player.playSound(player.getLocation(), plugin.config().readySound.bukkitSound(), 0.1F, 0.1F);
+            try {
+                Player player = sePlayer.getPlayer();
+                if (!player.isGliding()) {
+                    sePlayer.setBoostTicks(0);
                 }
+                if (!player.hasPermission("superelytra.launch")) {
+                    return;
+                }
+                if (shouldCancel(player)) continue;
+                if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
+
+                int time = sePlayer.getChargeUpTicks();
+                sePlayer.setChargeUpTicks(++time);
+
+                Location loc = player.getLocation();
+                World world = player.getWorld();
+
+                world.spawnParticle(Particle.SMOKE_NORMAL, loc, 1, 0.2F, 0.2F, 0.2F, 0.0F); // radius 30
+                if (time % 3 == 0) {
+                    if (plugin.config().chargeSound != null)
+                        player.playSound(player.getLocation(), plugin.config().chargeSound.bukkitSound(), 0.1F, 0.1F);
+                    if (time >= plugin.config().chargeupTicks) {
+                        world.spawnParticle(Particle.FLAME, loc, 1, 0.4F, 0.1F, 0.4F, 0.01F);
+                        if (plugin.config().readySound != null)
+                            player.playSound(player.getLocation(), plugin.config().readySound.bukkitSound(), 0.1F, 0.1F);
+                    }
+                }
+            } catch (Exception ex) {
+                Sentry.captureException(ex);
             }
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        if (shouldCancel(player)) return;
-        if (!player.isGliding()) {
-            return;
-        }
+        try {
+            Player player = event.getPlayer();
+            if (shouldCancel(player)) return;
+            if (!player.isGliding()) {
+                return;
+            }
 
-        SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
+            SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
 
-        if (player.hasPermission(PERMISSION_GLIDE)
-            && superElytraPlayer.isEnabled()
-            && superElytraPlayer.preferences.boost
-            && player.getLocation().getPitch() > plugin.config().maxGlideAngle
-        ) {
-            Vector unitVector = new Vector(0, player.getLocation().getDirection().getY(), 0);
-            player.setVelocity(player.getVelocity().add(unitVector.multiply(plugin.config().speed)));
-        }
+            if (player.hasPermission(PERMISSION_GLIDE)
+                    && superElytraPlayer.isEnabled()
+                    && superElytraPlayer.preferences.boost
+                    && player.getLocation().getPitch() > plugin.config().maxGlideAngle
+            ) {
+                Vector unitVector = new Vector(0, player.getLocation().getDirection().getY(), 0);
+                player.setVelocity(player.getVelocity().add(unitVector.multiply(plugin.config().speed)));
+            }
 
-        if (player.hasPermission(PERMISSION_BOOST)
-            && superElytraPlayer.isBoosting()
-            && superElytraPlayer.preferences.firework) {
-            Vector boostMomentum = player.getVelocity().normalize().multiply(plugin.config().boostModifier);
-            player.setVelocity(player.getLocation().getDirection().add(boostMomentum));
-            superElytraPlayer.decrementBoostTicks();
+            if (player.hasPermission(PERMISSION_BOOST)
+                    && superElytraPlayer.isBoosting()
+                    && superElytraPlayer.preferences.firework) {
+                Vector boostMomentum = player.getVelocity().normalize().multiply(plugin.config().boostModifier);
+                player.setVelocity(player.getLocation().getDirection().add(boostMomentum));
+                superElytraPlayer.decrementBoostTicks();
+            }
+        } catch (Exception ex) {
+            Sentry.captureException(ex);
         }
     }
 
     @EventHandler()
     public void onBoost(PlayerInteractEvent event) {
-        SuperElytraPlayer player = PlayerManager.getInstance().getPlayer(event.getPlayer());
-        ItemStack item = event.getItem();
+        try {
+            SuperElytraPlayer player = PlayerManager.getInstance().getPlayer(event.getPlayer());
+            ItemStack item = event.getItem();
 
-        if (!player.isEnabled()
-            || !player.preferences.firework
-            || event.getAction() != Action.RIGHT_CLICK_AIR
-            || item == null
-            || item.getType() != Material.FIREWORK_ROCKET
-        ) {
-            return;
+            if (!player.isEnabled()
+                    || !player.preferences.firework
+                    || event.getAction() != Action.RIGHT_CLICK_AIR
+                    || item == null
+                    || item.getType() != Material.FIREWORK_ROCKET
+            ) {
+                return;
+            }
+
+            FireworkMeta meta = (FireworkMeta) item.getItemMeta();
+            player.setBoostTicks((meta.getPower() + 1) * plugin.config().boostDuration);
+
+        } catch (Exception ex) {
+            Sentry.captureException(ex);
         }
-
-        FireworkMeta meta = (FireworkMeta) item.getItemMeta();
-        player.setBoostTicks((meta.getPower() + 1) * plugin.config().boostDuration);
-
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onToggleSneak(PlayerToggleSneakEvent event) {
-        Player player = event.getPlayer();
-        if (!player.hasPermission(PERMISSION_LAUNCH)) return;
-        if (shouldCancel(player)) return;
+        try {
+            Player player = event.getPlayer();
+            if (!player.hasPermission(PERMISSION_LAUNCH)) return;
+            if (shouldCancel(player)) return;
 
-        ItemStack chestPlate = player.getEquipment().getChestplate();
-        if (chestPlate == null || chestPlate.getType() != Material.ELYTRA)
-            return;
-        SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
-        if (!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
-            return;
-        }
-
-        // start charging up
-        if (event.isSneaking()) {
-            PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(0);
-        }
-
-        // release charge
-        else {
-            if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargeupTicks) {
-                if (!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
-                    HashMap<String, String> vars = new HashMap<>();
-                    long time = plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId());
-                    long seconds = (time / 1000) % 60;
-                    long minutes = (time / (1000 * 60)) % 60;
-                    long hours = (time / (60 * 60 * 1000)) % 24;
-                    vars.put("seconds", String.valueOf(seconds));
-                    if (seconds == 1) {
-                        vars.put("seconds_plural", plugin.getMessenger().getMessage("second", new HashMap<>()));
-                    } else {
-                        vars.put("seconds_plural", plugin.getMessenger().getMessage("seconds", new HashMap<>()));
-                    }
-                    if (minutes == 0) {
-                        vars.put("minutes_plural", "");
-                        vars.put("minutes", "");
-                    } else if (minutes == 1) {
-                        vars.put("minutes_plural", plugin.getMessenger().getMessage("minute", new HashMap<>()));
-                        vars.put("minutes", String.valueOf(minutes));
-                    } else {
-                        vars.put("minutes_plural", plugin.getMessenger().getMessage("minutes", new HashMap<>()));
-                        vars.put("minutes", String.valueOf(minutes));
-                    }
-                    if (hours == 0) {
-                        vars.put("hours_plural", "");
-                        vars.put("hours", "");
-                    } else if (hours == 1) {
-                        vars.put("hours_plural", plugin.getMessenger().getMessage("hour", new HashMap<>()));
-                        vars.put("hours", String.valueOf(hours));
-                    } else {
-                        vars.put("hours_plural", plugin.getMessenger().getMessage("hours", new HashMap<>()));
-                        vars.put("hours", String.valueOf(hours));
-                    }
-                    vars.put("username", player.getName());
-                    plugin.getMessenger().sendErrorMessage(player, "cooldown", vars, true);
-                    PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
-                    return;
-                }
-                Location loc = player.getLocation();
-                Vector dir = loc.getDirection().add(new Vector(0, plugin.config().launch, 0));
-
-                player.setVelocity(player.getVelocity().add(dir));
-                loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
-                if (plugin.config().launchSound != null)
-                    player.playSound(loc, plugin.config().launchSound.bukkitSound(), 0.1F, 2.0F);
-                plugin.getLaunchCooldownManager().use(player.getUniqueId());
+            ItemStack chestPlate = player.getEquipment().getChestplate();
+            if (chestPlate == null || chestPlate.getType() != Material.ELYTRA)
+                return;
+            SuperElytraPlayer superElytraPlayer = PlayerManager.getInstance().getPlayer(player);
+            if (!superElytraPlayer.isEnabled() || !superElytraPlayer.preferences.launch) {
+                return;
             }
-            PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
+
+            // start charging up
+            if (event.isSneaking()) {
+                PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(0);
+            }
+
+            // release charge
+            else {
+                if (PlayerManager.getInstance().getPlayer(player).getChargeUpTicks() >= plugin.config().chargeupTicks) {
+                    if (!plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+                        HashMap<String, String> vars = new HashMap<>();
+                        long time = plugin.getLaunchCooldownManager().timeUntilUse(player.getUniqueId());
+                        long seconds = (time / 1000) % 60;
+                        long minutes = (time / (1000 * 60)) % 60;
+                        long hours = (time / (60 * 60 * 1000)) % 24;
+                        vars.put("seconds", String.valueOf(seconds));
+                        if (seconds == 1) {
+                            vars.put("seconds_plural", plugin.getMessenger().getMessage("second", new HashMap<>()));
+                        } else {
+                            vars.put("seconds_plural", plugin.getMessenger().getMessage("seconds", new HashMap<>()));
+                        }
+                        if (minutes == 0) {
+                            vars.put("minutes_plural", "");
+                            vars.put("minutes", "");
+                        } else if (minutes == 1) {
+                            vars.put("minutes_plural", plugin.getMessenger().getMessage("minute", new HashMap<>()));
+                            vars.put("minutes", String.valueOf(minutes));
+                        } else {
+                            vars.put("minutes_plural", plugin.getMessenger().getMessage("minutes", new HashMap<>()));
+                            vars.put("minutes", String.valueOf(minutes));
+                        }
+                        if (hours == 0) {
+                            vars.put("hours_plural", "");
+                            vars.put("hours", "");
+                        } else if (hours == 1) {
+                            vars.put("hours_plural", plugin.getMessenger().getMessage("hour", new HashMap<>()));
+                            vars.put("hours", String.valueOf(hours));
+                        } else {
+                            vars.put("hours_plural", plugin.getMessenger().getMessage("hours", new HashMap<>()));
+                            vars.put("hours", String.valueOf(hours));
+                        }
+                        vars.put("username", player.getName());
+                        plugin.getMessenger().sendErrorMessage(player, "cooldown", vars, true);
+                        PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
+                        return;
+                    }
+                    Location loc = player.getLocation();
+                    Vector dir = loc.getDirection().add(new Vector(0, plugin.config().launch, 0));
+
+                    player.setVelocity(player.getVelocity().add(dir));
+                    loc.getWorld().spawnParticle(Particle.CLOUD, loc, 30, 0.5F, 0.5F, 0.5F, 0.0F);
+                    if (plugin.config().launchSound != null)
+                        player.playSound(loc, plugin.config().launchSound.bukkitSound(), 0.1F, 2.0F);
+                    plugin.getLaunchCooldownManager().use(player.getUniqueId());
+                }
+                PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
+            }
+        } catch (Exception ex) {
+            Sentry.captureException(ex);
         }
     }
 
