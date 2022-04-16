@@ -1,6 +1,7 @@
 package eisenwave.elytra;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 
 import io.sentry.Sentry;
@@ -27,6 +28,8 @@ public class SuperElytraListener implements Listener {
             PERMISSION_BOOST = "superelytra.boost";
 
     private final transient SuperElytraPlugin plugin;
+
+    private final HashSet<String> handledExceptions = new HashSet<>();
 
     public SuperElytraListener(SuperElytraPlugin plugin) {
         this.plugin = plugin;
@@ -82,7 +85,11 @@ public class SuperElytraListener implements Listener {
                     }
                 }
             } catch (Exception ex) {
+                if (this.handledExceptions.contains(ex.getMessage())) {
+                    return;
+                }
                 Sentry.captureException(ex);
+                this.handledExceptions.add(ex.getMessage());
             }
         }
     }
@@ -115,7 +122,11 @@ public class SuperElytraListener implements Listener {
                 superElytraPlayer.decrementBoostTicks();
             }
         } catch (Exception ex) {
+            if (this.handledExceptions.contains(ex.getMessage())) {
+                return;
+            }
             Sentry.captureException(ex);
+            this.handledExceptions.add(ex.getMessage());
         }
     }
 
@@ -138,7 +149,11 @@ public class SuperElytraListener implements Listener {
             player.setBoostTicks((meta.getPower() + 1) * plugin.config().boostDuration);
 
         } catch (Exception ex) {
+            if (this.handledExceptions.contains(ex.getMessage())) {
+                return;
+            }
             Sentry.captureException(ex);
+            this.handledExceptions.add(ex.getMessage());
         }
     }
 
@@ -214,7 +229,11 @@ public class SuperElytraListener implements Listener {
                 PlayerManager.getInstance().getPlayer(player).setChargeUpTicks(-1);
             }
         } catch (Exception ex) {
+            if (this.handledExceptions.contains(ex.getMessage())) {
+                return;
+            }
             Sentry.captureException(ex);
+            this.handledExceptions.add(ex.getMessage());
         }
     }
 
