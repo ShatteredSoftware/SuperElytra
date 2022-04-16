@@ -2,15 +2,14 @@ package eisenwave.elytra;
 
 /**
  * Version independent spigot sounds.
- *
+ * <p>
  * Enum mapping to sound names for different minecraft versions.
  *
- * @since 1.0.0
  * @author Nikl
  * @author MrBlobman
+ * @since 1.0.0
  */
-public enum Sound
-{/**/
+public enum Sound {/**/
     ITEM_TRIDENT_THROW("ITEM_TRIDENT_THROW"),
     AMBIENCE_CAVE("AMBIENCE_CAVE", "AMBIENT_CAVE"),
     AMBIENCE_RAIN("AMBIENCE_RAIN", "WEATHER_RAIN"),
@@ -207,38 +206,32 @@ public enum Sound
     VILLAGER_NO("VILLAGER_NO", "ENTITY_VILLAGER_NO"),
     VILLAGER_YES("VILLAGER_YES", "ENTITY_VILLAGER_YES");
 
-    private String[] versionDependentNames;
-    private org.bukkit.Sound cached = null;
+    private final String[] versionDependentNames;
+    private org.bukkit.Sound cached;
 
-    Sound(String... versionDependentNames)
-    {
+    Sound(final String... versionDependentNames) {
         this.versionDependentNames = versionDependentNames;
     }
 
     /**
      * Get the bukkit sound for current server version
-     *
+     * <p>
      * Caches sound on first call
+     *
      * @return corresponding {@link org.bukkit.Sound}
      */
-    public org.bukkit.Sound bukkitSound()
-    {
-        if (cached != null)
-        {
-            return cached;
+    public org.bukkit.Sound bukkitSound() {
+        if (this.cached != null) {
+            return this.cached;
         }
-        for (String name : versionDependentNames)
-        {
-            try
-            {
-                cached = org.bukkit.Sound.valueOf(name);
-                return cached;
-            }
-            catch (IllegalArgumentException ignore2)
-            {
+        for (final String name : this.versionDependentNames) {
+            try {
+                this.cached = org.bukkit.Sound.valueOf(name);
+                return this.cached;
+            } catch (final IllegalArgumentException ignore2) {
                 // try next
             }
         }
-        throw new IllegalArgumentException("Found no valid sound name for " + this.name());
+        throw new IllegalArgumentException("Found no valid sound name for " + name());
     }
 }

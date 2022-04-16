@@ -1,56 +1,55 @@
 package eisenwave.elytra;
 
-import eisenwave.elytra.data.PlayerPreferences;
+import org.bukkit.entity.Player;
+
 import java.util.Iterator;
 import java.util.UUID;
 import java.util.WeakHashMap;
-import org.bukkit.entity.Player;
 
 public class PlayerManager implements Iterable<SuperElytraPlayer> {
-    private static PlayerManager instance = null;
+    private static PlayerManager instance;
 
     private final WeakHashMap<UUID, SuperElytraPlayer> players;
 
     private PlayerManager() {
-        players = new WeakHashMap<>();
+        this.players = new WeakHashMap<>();
     }
 
     public static PlayerManager getInstance() {
-        if(instance == null) {
-            instance = new PlayerManager();
+        if (PlayerManager.instance == null) {
+            PlayerManager.instance = new PlayerManager();
         }
-        return instance;
+        return PlayerManager.instance;
     }
 
-    public void loadPlayer(Player player) {
-        players.put(player.getUniqueId(), new SuperElytraPlayer(player));
+    public void loadPlayer(final Player player) {
+        this.players.put(player.getUniqueId(), new SuperElytraPlayer(player));
     }
 
-    public void removePlayer(Player player) {
-        SuperElytraPlayer sePlayer = players.get(player.getUniqueId());
-        if(sePlayer == null) {
+    public void removePlayer(final Player player) {
+        final SuperElytraPlayer sePlayer = this.players.get(player.getUniqueId());
+        if (sePlayer == null) {
             return;
         }
-        players.remove(player.getUniqueId());
+        this.players.remove(player.getUniqueId());
         sePlayer.preferences.save(player.getUniqueId());
     }
 
-    public SuperElytraPlayer getPlayer(Player player) {
-        if(player == null) {
+    public SuperElytraPlayer getPlayer(final Player player) {
+        if (player == null) {
             throw new IllegalArgumentException("Player cannot be null.");
         }
-        if (players.containsKey(player.getUniqueId())) {
-            return players.get(player.getUniqueId());
-        }
-        else {
-            SuperElytraPlayer sePlayer = new SuperElytraPlayer(player);
-            players.put(player.getUniqueId(), sePlayer);
+        if (this.players.containsKey(player.getUniqueId())) {
+            return this.players.get(player.getUniqueId());
+        } else {
+            final SuperElytraPlayer sePlayer = new SuperElytraPlayer(player);
+            this.players.put(player.getUniqueId(), sePlayer);
             return sePlayer;
         }
     }
 
     @Override
     public Iterator<SuperElytraPlayer> iterator() {
-        return players.values().iterator();
+        return this.players.values().iterator();
     }
 }

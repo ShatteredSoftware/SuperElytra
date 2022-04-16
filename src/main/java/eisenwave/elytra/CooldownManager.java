@@ -17,17 +17,18 @@ public class CooldownManager {
      * Constructs a cooldown manager with {@link #DEFAULT_COOLDOWN} as the cooldown.
      */
     public CooldownManager() {
-        this(DEFAULT_COOLDOWN);
+        this(CooldownManager.DEFAULT_COOLDOWN);
     }
 
     /**
      * Constructs a cooldown manager with a specified cooldown.
+     *
      * @param cooldown The number of milliseconds between uses of this feature.
      */
-    public CooldownManager(Integer cooldown) {
-        lastUse = new HashMap<>();
+    public CooldownManager(final Integer cooldown) {
+        this.lastUse = new HashMap<>();
         if (cooldown == null) {
-            this.cooldown = DEFAULT_COOLDOWN;
+            this.cooldown = CooldownManager.DEFAULT_COOLDOWN;
         } else {
             this.cooldown = cooldown;
         }
@@ -39,11 +40,11 @@ public class CooldownManager {
      * @param uuid The player to check.
      * @return Whether this player has time left on their cooldown.
      */
-    public boolean canUse(UUID uuid) {
-        if (!lastUse.containsKey(uuid)) {
+    public boolean canUse(final UUID uuid) {
+        if (!this.lastUse.containsKey(uuid)) {
             return true;
         }
-        return System.currentTimeMillis() > (lastUse.get(uuid) + cooldown);
+        return System.currentTimeMillis() > (this.lastUse.get(uuid) + this.cooldown);
     }
 
     /**
@@ -51,8 +52,8 @@ public class CooldownManager {
      *
      * @param uuid The player to set the cooldown for.
      */
-    public void use(UUID uuid) {
-        lastUse.put(uuid, System.currentTimeMillis());
+    public void use(final UUID uuid) {
+        this.lastUse.put(uuid, System.currentTimeMillis());
     }
 
     /**
@@ -61,11 +62,11 @@ public class CooldownManager {
      * @param uuid The UUID of the player to check.
      * @return The amount of time left on this cooldown, or 0 if there is none.
      */
-    public long timeUntilUse(UUID uuid) {
-        if (!lastUse.containsKey(uuid)) {
+    public long timeUntilUse(final UUID uuid) {
+        if (!this.lastUse.containsKey(uuid)) {
             return 0;
         }
-        long left = (lastUse.get(uuid) + cooldown) - System.currentTimeMillis();
+        final long left = (this.lastUse.get(uuid) + this.cooldown) - System.currentTimeMillis();
         return left > 0 ? left : 0;
     }
 }
