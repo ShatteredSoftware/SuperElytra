@@ -8,7 +8,8 @@ import eisenwave.elytra.data.SuperElytraConfig;
 import eisenwave.elytra.messages.Messageable;
 import eisenwave.elytra.messages.Messages;
 import eisenwave.elytra.messages.Messenger;
-import io.sentry.Sentry;
+import io.sentry.Hub;
+import io.sentry.SentryOptions;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
@@ -26,6 +27,11 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     private Messages messages;
     private CooldownManager launchCooldownManager;
     private CooldownManager boostCooldownManager;
+    private final SentryOptions sentryOptions = new SentryOptions();
+    private Hub hub;
+    public Hub getErrorLogger() {
+        return this.hub;
+    }
 
     public SuperElytraConfig config() {
         return this.config;
@@ -100,13 +106,13 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         this.initListeners();
         this.initCommands();
 
-        Sentry.init(options -> {
-            options.setDsn("https://d48172d870b54d749614e2711d6f377d@o244958.ingest.sentry.io/6339955");
-            options.setTracesSampleRate(1.0);
-        });
-        Sentry.setExtra("plugin_version", this.getDescription().getVersion());
-        Sentry.setExtra("bukkit_version", this.getServer().getBukkitVersion());
-        Sentry.setExtra("server_version", this.getServer().getVersion());
+        SentryOptions options = new SentryOptions();
+        options.setDsn("https://d48172d870b54d749614e2711d6f377d@o244958.ingest.sentry.io/6339955");
+        options.setTracesSampleRate(1.0);
+        hub = new Hub(options);
+        hub.setExtra("plugin_version", this.getDescription().getVersion());
+        hub.setExtra("bukkit_version", this.getServer().getBukkitVersion());
+        hub.setExtra("server_version", this.getServer().getVersion());
     }
 
     private void loadMessages() {

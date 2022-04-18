@@ -3,6 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 repositories {
@@ -30,6 +31,7 @@ processResources {
     def hash = "${getHash()}"
     with copySpec{
         from 'src/main/resources'
+        duplicatesStrategy DuplicatesStrategy.INCLUDE
         filter(ReplaceTokens, tokens: [ version: project.version ])
     }
 }
@@ -44,4 +46,17 @@ publishing {
             from(components.java)
         }
     }
+}
+
+task jars {
+    dependsOn shadowJar, jar
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('io.sentry:sentry:5.7.3'))
+    }
+    relocate 'io.sentry', 'eisenwave.elytra.deps'
+    minimize()
+    classifier 'all'
 }

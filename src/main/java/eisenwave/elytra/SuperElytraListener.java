@@ -1,6 +1,5 @@
 package eisenwave.elytra;
 
-import io.sentry.Sentry;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -88,7 +87,7 @@ public class SuperElytraListener implements Listener {
                 if (handledExceptions.contains(ex.getMessage())) {
                     return;
                 }
-                Sentry.captureException(ex);
+                this.plugin.getErrorLogger().captureException(ex);
                 handledExceptions.add(ex.getMessage());
             }
         }
@@ -125,7 +124,7 @@ public class SuperElytraListener implements Listener {
             if (handledExceptions.contains(ex.getMessage())) {
                 return;
             }
-            Sentry.captureException(ex);
+            this.plugin.getErrorLogger().captureException(ex);
             handledExceptions.add(ex.getMessage());
         }
     }
@@ -152,7 +151,7 @@ public class SuperElytraListener implements Listener {
             if (handledExceptions.contains(ex.getMessage())) {
                 return;
             }
-            Sentry.captureException(ex);
+            this.plugin.getErrorLogger().captureException(ex);
             handledExceptions.add(ex.getMessage());
         }
     }
@@ -232,7 +231,7 @@ public class SuperElytraListener implements Listener {
             if (handledExceptions.contains(ex.getMessage())) {
                 return;
             }
-            Sentry.captureException(ex);
+            this.plugin.getErrorLogger().captureException(ex);
             handledExceptions.add(ex.getMessage());
         }
     }
