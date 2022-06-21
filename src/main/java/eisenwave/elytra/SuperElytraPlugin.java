@@ -99,13 +99,6 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
     @Override
     public void onEnable() {
-        final MetricsLite metrics = new MetricsLite(this, 7488);
-        this.saveDefaultConfig();
-        this.reload();
-
-        this.initListeners();
-        this.initCommands();
-
         SentryOptions options = new SentryOptions();
         options.setDsn("https://d48172d870b54d749614e2711d6f377d@o244958.ingest.sentry.io/6339955");
         options.setTracesSampleRate(1.0);
@@ -113,6 +106,13 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         hub.setExtra("plugin_version", this.getDescription().getVersion());
         hub.setExtra("bukkit_version", this.getServer().getBukkitVersion());
         hub.setExtra("server_version", this.getServer().getVersion());
+
+        final MetricsLite metrics = new MetricsLite(this, 7488);
+        this.saveDefaultConfig();
+        this.reload();
+
+        this.initListeners();
+        this.initCommands();
     }
 
     private void loadMessages() {
