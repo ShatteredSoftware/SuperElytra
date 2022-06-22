@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     implementation 'org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT'
-    implementation 'io.sentry:sentry:5.7.3'
+    implementation 'io.sentry:sentry:6.0.0'
 }
 
 // Calculates the git hash and adds it to the version.
@@ -54,7 +54,7 @@ task jars {
 
 shadowJar {
     dependencies {
-        include(dependency('io.sentry:sentry:5.7.3'))
+        include(dependency('io.sentry:sentry:.*'))
     }
     relocate 'io.sentry', 'eisenwave.elytra.deps'
     minimize()

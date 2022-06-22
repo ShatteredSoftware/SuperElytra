@@ -3,7 +3,7 @@ main: eisenwave.elytra.SuperElytraPlugin
 version: @version@
 api-version: 1.13
 libraries:
-  - 'io.sentry:sentry:5.7.3'
+  - 'io.sentry:sentry:6.0.0'
 
 permissions:
   superelytra.glide:
