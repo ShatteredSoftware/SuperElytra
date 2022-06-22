@@ -58,5 +58,5 @@ shadowJar {
     }
     relocate 'io.sentry', 'eisenwave.elytra.deps'
     minimize()
-    classifier 'all'
+    classifier 'legacy'
 }
