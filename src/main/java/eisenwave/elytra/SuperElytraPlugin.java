@@ -31,8 +31,6 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     private Messenger messenger;
     private Messages messages;
     private CooldownManager launchCooldownManager;
-    private CooldownManager boostCooldownManager;
-    private final SentryOptions sentryOptions = new SentryOptions();
     private Hub hub;
     public Hub getErrorLogger() {
         return this.hub;
@@ -45,7 +43,24 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     public void reload() {
         if (getConfig().contains("config")) {
             reloadConfig();
-            config = (SuperElytraConfig) getConfig().get("config");
+            Object tmpConfig = getConfig().get("config");
+            if (tmpConfig == null) {
+                Throwable throwable = new IllegalStateException("Config loaded is null; please check your syntax or delete your config.");
+                this.getErrorLogger().captureException(throwable);
+                this.printHelpMessage();
+                throwable.printStackTrace();
+                this.setEnabled(false);
+            }
+            if (!(tmpConfig instanceof SuperElytraConfig)) {
+                Throwable throwable = new IllegalStateException("Config is not assignable to SuperElytraConfig; please check your syntax or delete your config.");
+                this.getErrorLogger().captureException(throwable);
+                this.printHelpMessage();
+                throwable.printStackTrace();
+                this.setEnabled(false);
+            }
+            else {
+                config = (SuperElytraConfig) tmpConfig;
+            }
         } else {
             try {
                 final File f = new File(getDataFolder(), "config.yml");
@@ -74,11 +89,14 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                 getConfig().set("config", config);
                 getConfig().save(f);
             } catch (final Exception ex) {
+                this.getErrorLogger().captureException(ex);
                 ex.printStackTrace();
+                this.printHelpMessage();
+                this.setEnabled(false);
+                return;
             }
         }
         launchCooldownManager = new CooldownManager(config.cooldown);
-        boostCooldownManager = new CooldownManager(50);
         this.loadMessages();
     }
 
@@ -112,7 +130,9 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         hub.setExtra("bukkit_version", this.getServer().getBukkitVersion());
         hub.setExtra("server_version", this.getServer().getVersion());
 
+        //noinspection unused
         final MetricsLite metrics = new MetricsLite(this, 7488);
+
         this.saveDefaultConfig();
         this.reload();
 
@@ -169,5 +189,13 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
     public CooldownManager getLaunchCooldownManager() {
         return launchCooldownManager;
+    }
+
+    private void printHelpMessage() {
+        getLogger().warning("");
+        getLogger().warning("");
+        getLogger().warning("An error has occurred; get help at https://discord.gg/zUbNX9t.");
+        getLogger().warning("");
+        getLogger().warning("");
     }
 }
