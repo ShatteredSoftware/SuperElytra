@@ -16,12 +16,17 @@ import java.util.List;
 
 public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
     private final SuperElytraPlugin plugin;
+    private final PlayerManager playerManager;
 
-    public ElytraToggleCommand(final SuperElytraPlugin plugin) {
+    public ElytraToggleCommand(final SuperElytraPlugin plugin, final PlayerManager playerManager) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null.");
         }
         this.plugin = plugin;
+        if (playerManager == null) {
+            throw new IllegalArgumentException("PlayerManager cannot be null.");
+        }
+        this.playerManager = playerManager;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
             this.plugin.getMessenger().sendErrorMessage(player, "not-enough-args", vars, true);
             return true;
         }
-        final PlayerPreferences prefs = PlayerManager.getInstance().getPlayer(player).preferences;
+        final PlayerPreferences prefs = this.playerManager.getPlayer(player).preferences;
         if (args[0].equalsIgnoreCase("launch")) {
             if (args.length == 1) {
                 prefs.launch = !prefs.launch;

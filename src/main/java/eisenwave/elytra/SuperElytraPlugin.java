@@ -5,6 +5,8 @@ import eisenwave.elytra.command.ElytraToggleCommand;
 import eisenwave.elytra.command.ReloadCommand;
 import eisenwave.elytra.data.PlayerPreferences;
 import eisenwave.elytra.data.SuperElytraConfig;
+import eisenwave.elytra.errors.ErrorLogger;
+import eisenwave.elytra.listeners.*;
 import eisenwave.elytra.messages.Messageable;
 import eisenwave.elytra.messages.Messages;
 import eisenwave.elytra.messages.Messenger;
@@ -13,7 +15,6 @@ import io.sentry.SentryOptions;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 
@@ -21,21 +22,16 @@ import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
 
-public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageable {
+public class SuperElytraPlugin extends JavaPlugin implements Messageable {
 
-    private SuperElytraListener eventHandler;
     private SuperElytraConfig config;
     private Messenger messenger;
     private Messages messages;
     private CooldownManager launchCooldownManager;
     private Hub hub;
-    public Hub getErrorLogger() {
-        return this.hub;
-    }
-
-    public SuperElytraListener getEventHandler() {
-        return this.eventHandler;
-    }
+    private ErrorLogger errorLogger;
+    private PlayerManager playerManager;
+    private TickListener tickListener;
 
     @Override
     public Messenger getMessenger() {
@@ -56,14 +52,14 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
             Object tmpConfig = getConfig().get("config");
             if (tmpConfig == null) {
                 Throwable throwable = new IllegalStateException("Config loaded is null; please check your syntax or delete your config.");
-                this.getErrorLogger().captureException(throwable);
+                this.hub.captureException(throwable);
                 this.printHelpMessage();
                 throwable.printStackTrace();
                 this.setEnabled(false);
             }
             if (!(tmpConfig instanceof SuperElytraConfig)) {
                 Throwable throwable = new IllegalStateException("Config is not assignable to SuperElytraConfig; please check your syntax or delete your config.");
-                this.getErrorLogger().captureException(throwable);
+                this.hub.captureException(throwable);
                 this.printHelpMessage();
                 throwable.printStackTrace();
                 this.setEnabled(false);
@@ -99,7 +95,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
                 getConfig().set("config", config);
                 getConfig().save(f);
             } catch (final Exception ex) {
-                this.getErrorLogger().captureException(ex);
+                this.hub.captureException(ex);
                 ex.printStackTrace();
                 this.printHelpMessage();
                 this.setEnabled(false);
@@ -116,7 +112,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     }
 
     public void autosave() {
-        for (final SuperElytraPlayer player : PlayerManager.getInstance()) {
+        for (final SuperElytraPlayer player : playerManager) {
             if (player == null || player.getPlayer() == null) {
                 continue;
             }
@@ -139,6 +135,9 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         hub.setExtra("plugin_version", this.getDescription().getVersion());
         hub.setExtra("bukkit_version", this.getServer().getBukkitVersion());
         hub.setExtra("server_version", this.getServer().getVersion());
+
+        this.errorLogger = new ErrorLogger(hub);
+        this.playerManager = new PlayerManager();
 
         //noinspection unused
         final MetricsLite metrics = new MetricsLite(this, 7488);
@@ -165,19 +164,22 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     }
 
     private void initListeners() {
-        eventHandler = new SuperElytraListener(this);
+        this.tickListener = new TickListener(this, errorLogger, playerManager);
 
-        this.getServer().getPluginManager().registerEvents(this.eventHandler, this);
+        this.getServer().getPluginManager().registerEvents(new JoinListener(this, errorLogger, playerManager), this);
+        this.getServer().getPluginManager().registerEvents(new QuitListener(this, errorLogger, playerManager), this);
+        this.getServer().getPluginManager().registerEvents(new SneakListener(this, errorLogger, playerManager), this);
+        this.getServer().getPluginManager().registerEvents(new MoveListener(this, errorLogger, playerManager), this);
+        this.getServer().getPluginManager().registerEvents(new InteractListener(this, errorLogger, playerManager), this);
 
-        this.getServer().getScheduler().runTaskTimer(this, () -> this.eventHandler.onTick(), 0, 1);
-
+        this.getServer().getScheduler().runTaskTimer(this, () -> this.tickListener.onTick(), 0, 1);
         this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::autosave, 0, 20L * this.config.autosaveInterval);
     }
 
     private void initCommands() {
-        this.getCommandOrThrow("elytramode").setExecutor(new ElytraModeCommand(this));
+        this.getCommandOrThrow("elytramode").setExecutor(new ElytraModeCommand(this, playerManager));
         this.getCommandOrThrow("elytrareload").setExecutor(new ReloadCommand(this));
-        this.getCommandOrThrow("elytraprefs").setExecutor(new ElytraToggleCommand(this));
+        this.getCommandOrThrow("elytraprefs").setExecutor(new ElytraToggleCommand(this, playerManager));
     }
 
     private @Nonnull PluginCommand getCommandOrThrow(String name) {

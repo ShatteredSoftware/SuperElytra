@@ -17,12 +17,17 @@ import java.util.List;
 public class ElytraModeCommand implements CommandExecutor, TabCompleter {
 
     private final SuperElytraPlugin plugin;
+    private final PlayerManager playerManager;
 
-    public ElytraModeCommand(final SuperElytraPlugin plugin) {
+    public ElytraModeCommand(final SuperElytraPlugin plugin, final PlayerManager playerManager) {
         if (plugin == null) {
             throw new IllegalArgumentException("Plugin cannot be null.");
         }
         this.plugin = plugin;
+        if (playerManager == null) {
+            throw new IllegalArgumentException("PlayerManager cannot be null.");
+        }
+        this.playerManager = playerManager;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class ElytraModeCommand implements CommandExecutor, TabCompleter {
         }
 
         final Player player = (Player) sender;
-        final SuperElytraPlayer sePlayer = PlayerManager.getInstance().getPlayer(player);
+        final SuperElytraPlayer sePlayer = this.playerManager.getPlayer(player);
         if (!player.hasPermission("superelytra.command.elytramode")) {
             final HashMap<String, String> vars = new HashMap<>();
             this.plugin.getMessenger().sendErrorMessage(sender, "no-permission", vars, true);

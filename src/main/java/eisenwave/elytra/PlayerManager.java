@@ -7,19 +7,10 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 public class PlayerManager implements Iterable<SuperElytraPlayer> {
-    private static PlayerManager instance;
-
     private final WeakHashMap<UUID, SuperElytraPlayer> players;
 
-    private PlayerManager() {
+    public PlayerManager() {
         this.players = new WeakHashMap<>();
-    }
-
-    public static PlayerManager getInstance() {
-        if (PlayerManager.instance == null) {
-            PlayerManager.instance = new PlayerManager();
-        }
-        return PlayerManager.instance;
     }
 
     public void loadPlayer(final Player player) {
