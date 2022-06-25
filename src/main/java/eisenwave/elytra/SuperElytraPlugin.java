@@ -10,14 +10,19 @@ import eisenwave.elytra.messages.Messages;
 import eisenwave.elytra.messages.Messenger;
 import io.sentry.Hub;
 import io.sentry.SentryOptions;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.FileUtil;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageable {
 
@@ -140,9 +145,17 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
     }
 
     private void initCommands() {
-        this.getCommand("elytramode").setExecutor(new ElytraModeCommand(this));
-        this.getCommand("elytrareload").setExecutor(new ReloadCommand(this));
-        this.getCommand("elytraprefs").setExecutor(new ElytraToggleCommand(this));
+        this.getCommandOrThrow("elytramode").setExecutor(new ElytraModeCommand(this));
+        this.getCommandOrThrow("elytrareload").setExecutor(new ReloadCommand(this));
+        this.getCommandOrThrow("elytraprefs").setExecutor(new ElytraToggleCommand(this));
+    }
+
+    private @Nonnull PluginCommand getCommandOrThrow(String name) {
+        PluginCommand command = this.getCommand(name);
+        if (command == null) {
+            throw new IllegalStateException("Failed to get command " + name + ". Is it declared in the plugin.yml?");
+        }
+        return command;
     }
 
     public SuperElytraListener getEventHandler() {
