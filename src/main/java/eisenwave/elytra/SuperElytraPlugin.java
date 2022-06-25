@@ -141,7 +141,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
 
         this.getServer().getScheduler().runTaskTimer(this, () -> this.eventHandler.onTick(), 0, 1);
 
-        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::autosave, 0, 20 * this.config.autosaveInterval);
+        this.getServer().getScheduler().scheduleSyncRepeatingTask(this, this::autosave, 0, 20L * this.config.autosaveInterval);
     }
 
     private void initCommands() {
