@@ -33,6 +33,19 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
         return this.hub;
     }
 
+    public SuperElytraListener getEventHandler() {
+        return this.eventHandler;
+    }
+
+    @Override
+    public Messenger getMessenger() {
+        return this.messenger;
+    }
+
+    public CooldownManager getLaunchCooldownManager() {
+        return launchCooldownManager;
+    }
+
     public SuperElytraConfig config() {
         return this.config;
     }
@@ -173,19 +186,6 @@ public class SuperElytraPlugin extends JavaPlugin implements Listener, Messageab
             throw new IllegalStateException("Failed to get command " + name + ". Is it declared in the plugin.yml?");
         }
         return command;
-    }
-
-    public SuperElytraListener getEventHandler() {
-        return this.eventHandler;
-    }
-
-    @Override
-    public Messenger getMessenger() {
-        return this.messenger;
-    }
-
-    public CooldownManager getLaunchCooldownManager() {
-        return launchCooldownManager;
     }
 
     private void printHelpMessage() {
