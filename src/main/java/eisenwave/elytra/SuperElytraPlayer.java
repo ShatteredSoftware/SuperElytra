@@ -31,6 +31,10 @@ public class SuperElytraPlayer {
         preferences = PlayerPreferences.loadPreferences(player);
     }
 
+    public boolean isGrounded() {
+        return player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001;
+    }
+
     // GETTERS
 
     /**

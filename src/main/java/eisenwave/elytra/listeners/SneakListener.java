@@ -38,7 +38,6 @@ public class SneakListener extends BaseListener<PlayerToggleSneakEvent> implemen
 
             // Grounded
             if (player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001) {
-                playerManager.getPlayer(player).setInfiniteBoosting(false);
                 if (event.isSneaking()) {
                     playerManager.getPlayer(player).setChargeUpTicks(0);
                 }

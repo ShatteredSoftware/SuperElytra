@@ -24,6 +24,9 @@ public class MoveListener extends BaseListener<PlayerMoveEvent> implements Liste
             ).then(() -> {
             final Player player = event.getPlayer();
             final SuperElytraPlayer superElytraPlayer = playerManager.getPlayer(player);
+            if (superElytraPlayer.isGrounded()) {
+                superElytraPlayer.setInfiniteBoosting(false);
+            }
 
             if (player.hasPermission(Permission.GLIDE.permission)
                     && player.isGliding()

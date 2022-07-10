@@ -27,7 +27,7 @@ public class TickListener extends BaseListener<PlayerEvent> {
                     return;
                 }
                 if (!shouldHandle(player)) continue;
-                if (!player.isOnGround() || !sePlayer.isChargingLaunch()) continue;
+                if (!sePlayer.isGrounded() || !sePlayer.isChargingLaunch()) continue;
 
                 int time = sePlayer.getChargeUpTicks();
                 sePlayer.setChargeUpTicks(++time);
