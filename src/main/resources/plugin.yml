@@ -12,6 +12,12 @@ permissions:
   superelytra.launch:
     description: "launch by sneaking"
     default: true
+  superelytra.boost:
+    description: "allows using modified boosting"
+    default: true
+  superelytra.boost.sneak:
+    description: "allow sneaking while flying to boost"
+    default: op
   superelytra.command.elytramode:
     description: "/elytramode"
     default: true

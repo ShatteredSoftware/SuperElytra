@@ -16,6 +16,9 @@ public abstract class BaseListener<T extends PlayerEvent> {
     public enum Permission {
         LAUNCH("superelytra.launch"),
         GLIDE("superelytra.glide"),
+
+        BOOST_FLYING("superelytra.launch.flying"),
+
         BOOST("superelytra.boost");
 
         public final String permission;

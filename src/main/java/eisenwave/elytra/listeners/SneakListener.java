@@ -38,6 +38,7 @@ public class SneakListener extends BaseListener<PlayerToggleSneakEvent> implemen
 
             // Grounded
             if (player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001) {
+                playerManager.getPlayer(player).setInfiniteBoosting(false);
                 if (event.isSneaking()) {
                     playerManager.getPlayer(player).setChargeUpTicks(0);
                 }
@@ -52,7 +53,7 @@ public class SneakListener extends BaseListener<PlayerToggleSneakEvent> implemen
                     playerManager.getPlayer(player).setChargeUpTicks(-1);
                 }
             }
-            else if (player.isGliding() && plugin.config().allowCrouchBoost) {
+            else if (player.isGliding() && player.hasPermission(Permission.BOOST_FLYING.permission) && plugin.config().allowCrouchBoost) {
                 playerManager.getPlayer(player).setInfiniteBoosting(event.isSneaking());
             }
         }).run();
