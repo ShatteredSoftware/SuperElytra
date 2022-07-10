@@ -33,13 +33,16 @@ public class SuperElytraConfig implements ConfigurationSerializable {
     public final double boostModifier;
     public final double maxGlideAngle;
 
+    public final boolean allowCrouchBoost;
+
     private static final double BASE_LAUNCH = 3f;
     private static final double BASE_SPEED = 0.05f;
 
     public SuperElytraConfig(final int chargeupTicks, final double speedMultiplier, final double launchMultiplier,
                              final boolean enabledDefault, final Sound chargeSound, final Sound readySound,
                              final Sound launchSound, final int autosaveInterval, final int cooldown, final List<String> worlds,
-                             final boolean worldBlacklist, final boolean allowBoosting, final int boostDuration, final double boostModifier, final double maxGlideAngle) {
+                             final boolean worldBlacklist, final boolean allowBoosting, final int boostDuration, final double boostModifier, final double maxGlideAngle,
+                             final boolean allowCrouchBoost) {
         this.chargeupTicks = chargeupTicks;
         this.speedMultiplier = speedMultiplier;
         speed = speedMultiplier * SuperElytraConfig.BASE_SPEED;
@@ -57,6 +60,7 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         this.boostDuration = boostDuration;
         this.boostModifier = boostModifier;
         this.maxGlideAngle = maxGlideAngle;
+        this.allowCrouchBoost = allowCrouchBoost;
     }
 
     public static SuperElytraConfig deserialize(final Map<String, Object> map) {
@@ -77,7 +81,8 @@ public class SuperElytraConfig implements ConfigurationSerializable {
         final int boostDuration = getIfValid(map, "boost-duration", Integer.class, 40);
         final double boostModifier = getIfValid(map, "boost-modifier", Double.class, 0.0);
         final double maxGlideAngle = getIfValid(map, "max-glide-angle", Double.class, -90.0);
-        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist, allowBoosting, boostDuration, boostModifier, maxGlideAngle);
+        final boolean allowCrouchBoost = getIfValid(map, "allow-crouch-boost", Boolean.class, false);
+        return new SuperElytraConfig(chargeupTicks, speedMultiplier, launchMultiplier, enabledDefault, chargeSound, readySound, launchSound, autosaveInterval, cooldown, worlds, worldBlacklist, allowBoosting, boostDuration, boostModifier, maxGlideAngle, allowCrouchBoost);
     }
 
     @Override
@@ -99,6 +104,7 @@ public class SuperElytraConfig implements ConfigurationSerializable {
                 ", allowBoosting=" + this.allowBoosting +
                 ", boostDuration=" + this.boostDuration +
                 ", boostModifier=" + this.boostModifier +
+                ", allowCrouchBoost=" + this.allowCrouchBoost +
                 '}';
     }
 

@@ -26,6 +26,7 @@ public class MoveListener extends BaseListener<PlayerMoveEvent> implements Liste
             final SuperElytraPlayer superElytraPlayer = playerManager.getPlayer(player);
 
             if (player.hasPermission(Permission.GLIDE.permission)
+                    && player.isGliding()
                     && superElytraPlayer.isEnabled()
                     && superElytraPlayer.preferences.boost
                     && player.getLocation().getPitch() > this.plugin.config().maxGlideAngle
@@ -35,8 +36,7 @@ public class MoveListener extends BaseListener<PlayerMoveEvent> implements Liste
             }
 
             if (player.hasPermission(Permission.BOOST.permission)
-                    && superElytraPlayer.isBoosting()
-                    && superElytraPlayer.preferences.firework) {
+                    && superElytraPlayer.isBoosting()) {
                 final Vector boostMomentum = player.getVelocity().normalize().multiply(this.plugin.config().boostModifier);
                 player.setVelocity(player.getLocation().getDirection().add(boostMomentum));
                 superElytraPlayer.decrementBoostTicks();

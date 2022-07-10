@@ -17,6 +17,8 @@ public class SuperElytraPlayer {
     private boolean enabled;
     private int boostTicks;
 
+    private boolean infiniteBoosting = false;
+
     public SuperElytraPlayer(final Player player) {
         this(player, null);
     }
@@ -70,7 +72,7 @@ public class SuperElytraPlayer {
     }
 
     public boolean isBoosting() {
-        return this.boostTicks > 0;
+        return this.boostTicks > 0 || this.infiniteBoosting;
     }
 
     // SETTERS
@@ -96,6 +98,10 @@ public class SuperElytraPlayer {
 
     public void setBoostTicks(final int ticks) {
         boostTicks = ticks;
+    }
+
+    public void setInfiniteBoosting(final boolean boost) {
+        this.infiniteBoosting = boost;
     }
 
     public void addBoostTicks(final int ticks) {

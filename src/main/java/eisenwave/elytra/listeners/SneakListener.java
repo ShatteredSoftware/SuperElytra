@@ -36,18 +36,24 @@ public class SneakListener extends BaseListener<PlayerToggleSneakEvent> implemen
         ).then(() -> {
             Player player = event.getPlayer();
 
-            if (event.isSneaking()) {
-                playerManager.getPlayer(player).setChargeUpTicks(0);
-            }
-            else {
-                if (playerManager.getPlayer(player).getChargeUpTicks() >= this.plugin.config().chargeupTicks) {
-                    if (!this.plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
-                        sendCooldownMessage(player);
-                        return;
-                    }
-                    launch(player);
+            // Grounded
+            if (player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001) {
+                if (event.isSneaking()) {
+                    playerManager.getPlayer(player).setChargeUpTicks(0);
                 }
-                playerManager.getPlayer(player).setChargeUpTicks(-1);
+                else {
+                    if (playerManager.getPlayer(player).getChargeUpTicks() >= this.plugin.config().chargeupTicks) {
+                        if (!this.plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+                            sendCooldownMessage(player);
+                            return;
+                        }
+                        launch(player);
+                    }
+                    playerManager.getPlayer(player).setChargeUpTicks(-1);
+                }
+            }
+            else if (player.isGliding() && plugin.config().allowCrouchBoost) {
+                playerManager.getPlayer(player).setInfiniteBoosting(event.isSneaking());
             }
         }).run();
     }

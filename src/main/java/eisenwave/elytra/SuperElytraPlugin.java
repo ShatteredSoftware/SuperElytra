@@ -84,7 +84,7 @@ public class SuperElytraPlugin extends JavaPlugin implements Messageable {
                         50,
                         new ArrayList<>(),
                         true,
-                        false, 40, 0.0, -90);
+                        false, 40, 0.0, -90, false);
                 getConfig().set("chargeup_time", null);
                 getConfig().set("speed_multiplier", null);
                 getConfig().set("launch_multiplier", null);

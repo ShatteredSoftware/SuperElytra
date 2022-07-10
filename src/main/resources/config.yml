@@ -18,6 +18,8 @@ config:
   boost-modifier: 1.0
   # Ticks per firework duration level
   boost-duration: 20
+  # Allows infinitely boosting with the sneak key
+  allow-crouch-boost: false
   worlds:
     - world
   world-blacklist: false
