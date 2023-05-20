@@ -10,6 +10,7 @@ package eisenwave.elytra;
  * @since 1.0.0
  */
 public enum Sound {/**/
+    NOTE_BELL("BLOCK_NOTE_BLOCK_BELL", "BLOCK_NOTE_BELL"),
     ITEM_TRIDENT_THROW("ITEM_TRIDENT_THROW"),
     AMBIENCE_CAVE("AMBIENCE_CAVE", "AMBIENT_CAVE"),
     AMBIENCE_RAIN("AMBIENCE_RAIN", "WEATHER_RAIN"),

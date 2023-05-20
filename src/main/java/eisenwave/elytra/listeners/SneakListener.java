@@ -32,30 +32,29 @@ public class SneakListener extends BaseListener<PlayerToggleSneakEvent> implemen
                     return player.getEquipment() != null
                             && player.getEquipment().getChestplate() != null
                             && player.getEquipment().getChestplate().getType() == Material.ELYTRA;
-                }
-        ).then(() -> {
-            Player player = event.getPlayer();
+                }).then(() -> {
+                    Player player = event.getPlayer();
 
-            // Grounded
-            if (player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001) {
-                if (event.isSneaking()) {
-                    playerManager.getPlayer(player).setChargeUpTicks(0);
-                }
-                else {
-                    if (playerManager.getPlayer(player).getChargeUpTicks() >= this.plugin.config().chargeupTicks) {
-                        if (!this.plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
-                            sendCooldownMessage(player);
-                            return;
+                    // Grounded
+                    if (player.getLocation().getY() - (double) player.getLocation().getBlockY() < 0.0001) {
+                        if (event.isSneaking()) {
+                            playerManager.getPlayer(player).setChargeUpTicks(0);
+                        } else {
+                            if (playerManager.getPlayer(player).getChargeUpTicks() >= playerManager.getPlayer(player)
+                                    .getPrefs().personalChargeupTicks) {
+                                if (!this.plugin.getLaunchCooldownManager().canUse(player.getUniqueId())) {
+                                    sendCooldownMessage(player);
+                                    return;
+                                }
+                                launch(player);
+                            }
+                            playerManager.getPlayer(player).setChargeUpTicks(-1);
                         }
-                        launch(player);
+                    } else if (player.isGliding() && player.hasPermission(Permission.BOOST_FLYING.permission)
+                            && plugin.config().allowCrouchBoost) {
+                        playerManager.getPlayer(player).setInfiniteBoosting(event.isSneaking());
                     }
-                    playerManager.getPlayer(player).setChargeUpTicks(-1);
-                }
-            }
-            else if (player.isGliding() && player.hasPermission(Permission.BOOST_FLYING.permission) && plugin.config().allowCrouchBoost) {
-                playerManager.getPlayer(player).setInfiniteBoosting(event.isSneaking());
-            }
-        }).run();
+                }).run();
     }
 
     private void launch(Player player) {

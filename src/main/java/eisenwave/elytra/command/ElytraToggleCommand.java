@@ -31,7 +31,7 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(final CommandSender commandSender, final Command command, final String s,
-                             final String[] args) {
+            final String[] args) {
         if (!(commandSender instanceof Player)) {
             this.plugin.getMessenger().sendMessage(commandSender, "no-console");
             return true;
@@ -55,9 +55,11 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
             }
             if (args.length == 2) {
                 final String parse = args[1];
-                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
+                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true")
+                        || parse.equalsIgnoreCase("enable")) {
                     prefs.launch = true;
-                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
+                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false")
+                        || parse.equalsIgnoreCase("disable")) {
                     prefs.launch = false;
                 } else if (parse.equalsIgnoreCase("toggle")) {
                     prefs.launch = !prefs.launch;
@@ -81,9 +83,11 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
             }
             if (args.length == 2) {
                 final String parse = args[1];
-                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
+                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true")
+                        || parse.equalsIgnoreCase("enable")) {
                     prefs.boost = true;
-                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
+                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false")
+                        || parse.equalsIgnoreCase("disable")) {
                     prefs.boost = false;
                 } else if (parse.equalsIgnoreCase("toggle")) {
                     prefs.boost = !prefs.boost;
@@ -107,9 +111,11 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
             }
             if (args.length == 2) {
                 final String parse = args[1];
-                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true") || parse.equalsIgnoreCase("enable")) {
+                if (parse.equalsIgnoreCase("on") || parse.equalsIgnoreCase("true")
+                        || parse.equalsIgnoreCase("enable")) {
                     prefs.firework = true;
-                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false") || parse.equalsIgnoreCase("disable")) {
+                } else if (parse.equalsIgnoreCase("off") || parse.equalsIgnoreCase("false")
+                        || parse.equalsIgnoreCase("disable")) {
                     prefs.firework = false;
                 } else if (parse.equalsIgnoreCase("toggle")) {
                     prefs.firework = !prefs.firework;
@@ -127,31 +133,54 @@ public class ElytraToggleCommand implements CommandExecutor, TabCompleter {
                 this.plugin.getMessenger().sendMessage(commandSender, "firework-disabled", true);
             }
         }
+        if (args[0].equalsIgnoreCase("personalchargeup")) {
+            if (args.length == 1) {
+                prefs.personalChargeupTicks = 60;
+            }
+            if (args.length == 2) {
+                final String parse = args[1];
+                try {
+                    prefs.personalChargeupTicks = Integer.parseInt(parse) * 20; // convert seconds to ticks
+                } catch (final NumberFormatException e) {
+                    final HashMap<String, String> msgArgs = new HashMap<>();
+                    msgArgs.put("invalid", args[1]);
+                    msgArgs.put("exptected", "a number");
+                    this.plugin.getMessenger().sendErrorMessage(commandSender, "invalid-argument", msgArgs, true);
+                    return true;
+                }
+            }
+            // this.plugin.getMessenger().sendMessage(commandSender, "personalchargeup set
+            // to " + prefs.personalChargeupTicks, true);
+        }
         return true;
     }
 
     @Override
     public List<String> onTabComplete(final CommandSender commandSender, final Command command, final String s,
-                                      final String[] args) {
-        if (args.length == 0) return null;
+            final String[] args) {
+        if (args.length == 0)
+            return null;
 
         if (args.length == 1) {
             final String arg = args[0].toLowerCase();
             if (arg.isEmpty())
-                return Arrays.asList("launch", "boost", "firework");
+                return Arrays.asList("launch", "boost", "firework", "personalchargeup");
             else if ("launch".startsWith(arg))
                 return Collections.singletonList("launch");
             else if ("boost".startsWith(arg))
                 return Collections.singletonList("boost");
             else if ("firework".startsWith(arg))
                 return Collections.singletonList("firework");
+            else if ("personalchargeup".startsWith(arg))
+                return Collections.singletonList("personalchargeup");
             else
                 return Collections.emptyList();
         }
         if (args.length == 2) {
             final String parent = args[0].toLowerCase();
             final String arg = args[1].toLowerCase();
-            if (parent.equalsIgnoreCase("launch") || parent.equalsIgnoreCase("boost") || parent.equalsIgnoreCase("firework")) {
+            if (parent.equalsIgnoreCase("launch") || parent.equalsIgnoreCase("boost")
+                    || parent.equalsIgnoreCase("firework")) {
                 if (arg.isEmpty())
                     return Arrays.asList("enable", "disable", "toggle");
                 else if ("enable".startsWith(arg)) {
