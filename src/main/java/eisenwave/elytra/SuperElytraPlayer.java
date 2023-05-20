@@ -47,7 +47,17 @@ public class SuperElytraPlayer {
     }
 
     /**
-     * Returns the amount of charge-up ticks. If the number is negative, the player is not charging up a launch.
+     * Returns the preferences of the player.
+     * 
+     * @return the preferences
+     */
+    public PlayerPreferences getPrefs() {
+        return this.preferences;
+    }
+
+    /**
+     * Returns the amount of charge-up ticks. If the number is negative, the player
+     * is not charging up a launch.
      *
      * @return the amount of charge-up ticks
      */
@@ -91,7 +101,8 @@ public class SuperElytraPlayer {
     }
 
     /**
-     * Sets the amount of launch charge-up ticks of the player. If the given amount is negative, this indicates no
+     * Sets the amount of launch charge-up ticks of the player. If the given amount
+     * is negative, this indicates no
      * charge-up at all.
      *
      * @param ticks the amount of ticks

@@ -18,11 +18,14 @@ public class PlayerPreferences implements ConfigurationSerializable {
     public boolean launch;
     public boolean boost;
     public boolean firework;
+    public int personalChargeupTicks;
 
-    public PlayerPreferences(final boolean launch, final boolean boost, final boolean firework) {
+    public PlayerPreferences(final boolean launch, final boolean boost, final boolean firework,
+            final int personalChargeupTicks) {
         this.launch = launch;
         this.boost = boost;
         this.firework = firework;
+        this.personalChargeupTicks = personalChargeupTicks;
     }
 
     public static PlayerPreferences loadPreferences(final Player player) {
@@ -37,13 +40,13 @@ public class PlayerPreferences implements ConfigurationSerializable {
             if (config.contains("settings")) {
                 return (PlayerPreferences) config.get("settings");
             }
-            final PlayerPreferences prefs = new PlayerPreferences(true, true, true);
+            final PlayerPreferences prefs = new PlayerPreferences(true, true, true, 60);
             config.set("settings", prefs);
             config.save(f);
             return prefs;
         } catch (final IOException e) {
             e.printStackTrace();
-            return new PlayerPreferences(true, true, true);
+            return new PlayerPreferences(true, true, true, 60);
         }
     }
 
@@ -51,7 +54,8 @@ public class PlayerPreferences implements ConfigurationSerializable {
         final boolean launch = ConfigUtil.getIfValid(map, "launch", Boolean.class, true);
         final boolean boost = ConfigUtil.getIfValid(map, "boost", Boolean.class, true);
         final boolean firework = ConfigUtil.getIfValid(map, "firework", Boolean.class, true);
-        return new PlayerPreferences(launch, boost, firework);
+        final int personalChargeupTicks = ConfigUtil.getIfValid(map, "personalChargeupTicks", Integer.class, 60);
+        return new PlayerPreferences(launch, boost, firework, personalChargeupTicks);
     }
 
     public void save(final UUID uuid) {
@@ -63,7 +67,8 @@ public class PlayerPreferences implements ConfigurationSerializable {
                 f.createNewFile();
             }
             final YamlConfiguration config = YamlConfiguration.loadConfiguration(f);
-            final PlayerPreferences prefs = (PlayerPreferences) config.get("settings", new PlayerPreferences(true, true, true));
+            final PlayerPreferences prefs = (PlayerPreferences) config.get("settings",
+                    new PlayerPreferences(true, true, true, 60));
             config.set("settings", prefs);
             config.save(f);
         } catch (final IOException e) {
@@ -77,6 +82,7 @@ public class PlayerPreferences implements ConfigurationSerializable {
         map.put("launch", this.launch);
         map.put("boost", this.boost);
         map.put("firework", this.firework);
+        map.put("personalChargeupTicks", this.personalChargeupTicks);
         return map;
     }
 }
